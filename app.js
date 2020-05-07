@@ -1,12 +1,27 @@
 const express = require('express');
+const mongoose = require('mongoose');
+require('dotenv/config');
 
 const app = express();
+const user = require('./user/user');
+
+// middlewares
+
+
+// routing
+app.use('/user', user);
 
 app.get('/', (req, res) => {
-    res.send("Hello, world!")
+    res.send("Hello, world!");
+});
+
+// suppress the warnings
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useUnifiedTopology', true);
+// connect to db
+mongoose.connect(process.env.DB_CONNECTION, ()=>{
+    console.log("connected to DB!");
 })
 
-
-
-// listening on port 3000
-app.listen(3000);
+// listening on port 8000
+app.listen(8000);
