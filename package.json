@@ -1,0 +1,24 @@
+{
+  "name": "exchange-backend",
+  "version": "1.0.0",
+  "description": "The backend repo for exchange",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CSMT-Westwood/exchange-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CSMT-Westwood/exchange-backend/issues"
+  },
+  "homepage": "https://github.com/CSMT-Westwood/exchange-backend#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.3"
+  }
+}
