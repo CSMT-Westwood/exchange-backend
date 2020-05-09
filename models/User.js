@@ -5,10 +5,10 @@ const UserSchema = mongoose.Schema({
   username: String,
   password: String,
   email: String,
-  preferences: Array,
+  preferences: [String],
   info: {
-    num_of_followers: Number,
-    last_login: Date,
+    num_of_followers: {type: Number, default: 0},
+    last_login: {type: Date, default: Date.UTC(2000,1,1,0,0,0,0)},
     date_of_creation: { type: Date, default: Date.now }
   }
 });
