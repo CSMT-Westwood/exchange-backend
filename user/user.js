@@ -12,7 +12,6 @@ router.get('/', (req, res) => {
 
 
 router.post('/signup', (req,res)=>{
-    console.log(req.body);
     
     
     const newUser = new User({
@@ -23,8 +22,15 @@ router.post('/signup', (req,res)=>{
         info: req.body.info
     });
     
-        newUser.save();
-        res.sendStatus(200);
+        newUser.save()
+               .then(data => {
+                   console.log(data);
+                   res.json(data);
+               })
+               .catch(err =>{
+                   res.json({message: err});
+               });
+
     
 });
 
