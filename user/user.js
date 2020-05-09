@@ -42,4 +42,13 @@ router.post("/signup", (req, res) => {
     });
 });
 
+//delete user by username
+router.delete("/deleteUser/:username", async (req, res) => {
+  try {
+    const removedUser = await User.remove({ username: req.params.username });
+    res.json(removedUser);
+  } catch (err) {
+    res.json({ message: err });
+  }
+});
 module.exports = router;
