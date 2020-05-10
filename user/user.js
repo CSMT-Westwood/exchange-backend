@@ -1,7 +1,6 @@
 /*
 API for user info
 */
-
 const express = require("express");
 const router = express.Router();
 const validations = require("../input_validations"); //get validation schemas
@@ -19,7 +18,7 @@ router.get("/", async (req, res) => {
 //find user by username. Needs login token in the header
 router.get("/searchUser/:username", loggedin, async (req, res) => {
     const user = await User.find({ username: req.params.username });
-    if (user.length == 0) return res.status(400).send("No such user found");
+    if (user.length == 0) return res.status(400).send("User not found!");
     res.status(200).json(user);
 });
 
