@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 require("dotenv/config");
 
 const bodyParser = require("body-parser");
@@ -8,6 +9,7 @@ const user = require("./user/user");
 
 // middlewares
 app.use(bodyParser.json());
+app.use(cors());
 
 // routing
 app.use("/user", user);
