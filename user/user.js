@@ -8,6 +8,7 @@ const validations = require("../input_validations"); //get validation schemas
 const User = require("../models/User"); //get model
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken"); //jsonwebtoken
+const loggedin = require("../user/verifyToken"); //verifyToken.js
 
 //For debugging purpose, return all users in database
 router.get("/", async (req, res) => {
@@ -15,16 +16,11 @@ router.get("/", async (req, res) => {
     res.send(AllUsers);
 });
 
-//find user by username.
-router.get("/:username", (req, res) => {
-    const users = User.find({ username: req.params.username }).exec();
-    users
-        .then((data) => {
-            res.json(data);
-        })
-        .catch((err) => {
-            res.json({ message: err });
-        });
+//find user by username. Needs login token in the header
+router.get("/searchUser/:username", loggedin, async (req, res) => {
+    const user = await User.find({ username: req.params.username });
+    if (user.length == 0) return res.status(400).send("No such user found");
+    res.status(200).json(user);
 });
 
 /******User Signup API******/
@@ -82,12 +78,12 @@ router.post("/login", async (req, res) => {
     );
     if (!rightPassword) return res.status(400).send("incorrect, try again.");
 
-    //******TODO*********//  Token
+    //Token
     const token = jwt.sign(
         { _id: UserbyName._id, _username: UserbyName.username },
         process.env.TOKEN_SECRET
     );
-    res.header("token", token).json({ message: "logged in!", token: token });
+    res.header("token", token).json({ message: "logged in!", token: token }); // issue a token to response header
     // res.status(200).json({ message: "success" });
 });
 
