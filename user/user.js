@@ -1,9 +1,10 @@
 /*
 API for user info
 */
+
 const express = require("express");
 const router = express.Router();
-
+const validations = require("../input_validations"); //get validation schemas
 const User = require("../models/User"); //get model
 
 router.get("/", (req, res) => {
@@ -30,16 +31,20 @@ router.post("/signup", (req, res) => {
     preferences: req.body.preferences,
     info: req.body.info,
   });
-
-  newUser
-    .save()
-    .then((data) => {
-      console.log(data);
-      res.json(data);
-    })
-    .catch((err) => {
-      res.json({ message: err });
-    });
+  const error = validations.signUpSchema.validate(req.body).error;
+  if (error) {
+    res.status(400).send(error); //.details[0].message
+  } else {
+    newUser
+      .save()
+      .then((data) => {
+        console.log(data);
+        res.json(data);
+      })
+      .catch((err) => {
+        res.json({ message: err });
+      });
+  }
 });
 
 //delete user by username
