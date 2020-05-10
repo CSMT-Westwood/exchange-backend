@@ -7,7 +7,7 @@ The backend repo for exchange
 |    Command    | Behavior                                        |
 | :-----------: | :---------------------------------------------- |
 | `npm install` | install dependencies                            |
-|  `npm start`  | start the backend server listening on port 3000 |
+|  `npm start`  | start the backend server listening on port 8000 |
 
 ### note
 
