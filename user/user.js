@@ -23,7 +23,7 @@ router.get("/:username", (req, res) => {
     });
 });
 
-router.post("/signup", (req, res) => {
+router.post("/signup", async (req, res) => {
   const newUser = new User({
     username: req.body.username,
     password: req.body.password,
@@ -33,17 +33,19 @@ router.post("/signup", (req, res) => {
   });
   const error = validations.signUpSchema.validate(req.body).error;
   if (error) {
-    res.status(400).send(error); //.details[0].message
-  } else {
-    newUser
-      .save()
-      .then((data) => {
-        console.log(data);
-        res.json(data);
-      })
-      .catch((err) => {
-        res.json({ message: err });
-      });
+    return res.status(400).send(error.details[0].message); //send message if input is invalid
+  }
+  //Check duplicates in database
+  if (await User.findOne({ username: req.body.username }))
+    return res.status(400).send("The username already exists.");
+  if (await User.findOne({ email: req.body.email }))
+    return res.status(400).send("The email has been registered.");
+
+  try {
+    const addedUser = await newUser.save();
+    res.status(200).send(addedUser);
+  } catch (err) {
+    res.json({ message: err });
   }
 });
 
