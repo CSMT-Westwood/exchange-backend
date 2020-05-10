@@ -6,6 +6,7 @@ const express = require("express");
 const router = express.Router();
 const validations = require("../input_validations"); //get validation schemas
 const User = require("../models/User"); //get model
+const bcrypt = require("bcryptjs");
 
 router.get("/", (req, res) => {
   res.send("we are at /user/");
@@ -41,6 +42,12 @@ router.post("/signup", async (req, res) => {
   if (await User.findOne({ email: req.body.email }))
     return res.status(400).send("The email has been registered.");
 
+  //Hash Password
+  const salt = await bcrypt.genSalt();
+  const hashedpassword = await bcrypt.hash(req.body.password, salt);
+  newUser.password = hashedpassword;
+
+  //Creat a new user
   try {
     const addedUser = await newUser.save();
     res.status(200).send(addedUser);
