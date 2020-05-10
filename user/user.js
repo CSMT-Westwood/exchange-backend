@@ -7,6 +7,7 @@ const router = express.Router();
 const validations = require("../input_validations"); //get validation schemas
 const User = require("../models/User"); //get model
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken"); //jsonwebtoken
 
 //For debugging purpose, return all users in database
 router.get("/", async (req, res) => {
@@ -81,8 +82,13 @@ router.post("/login", async (req, res) => {
     );
     if (!rightPassword) return res.status(400).send("incorrect, try again.");
 
-    //******TODO*********//
-    res.status(200).json({ message: "success" });
+    //******TODO*********//  Token
+    const token = jwt.sign(
+        { _id: UserbyName._id, _username: UserbyName.username },
+        process.env.TOKEN_SECRET
+    );
+    res.header("token", token).json({ message: "logged in!", token: token });
+    // res.status(200).json({ message: "success" });
 });
 
 //delete all user by username API, for debugging purposes
