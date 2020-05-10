@@ -8,8 +8,10 @@ const validations = require("../input_validations"); //get validation schemas
 const User = require("../models/User"); //get model
 const bcrypt = require("bcryptjs");
 
-router.get("/", (req, res) => {
-  res.send("we are at /user/");
+//For debugging purpose, return all users in database
+router.get("/", async (req, res) => {
+  const AllUsers = await User.find();
+  res.send(AllUsers);
 });
 
 //find user by username.
@@ -24,6 +26,7 @@ router.get("/:username", (req, res) => {
     });
 });
 
+/******User Signup API******/
 router.post("/signup", async (req, res) => {
   const newUser = new User({
     username: req.body.username,
@@ -56,7 +59,27 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-//delete user by username
+//*****User Login API******/
+//body params: name(Email OR Username), password
+router.post("/login", async (req, res) => {
+  let UserbyName = await User.findOne({ email: req.body.name }); //try email
+  if (!UserbyName) {
+    UserbyName = await User.findOne({ username: req.body.name }); //try username
+    if (!UserbyName) return res.status(400).send("incorrect, try again."); //if not found, return error
+  }
+
+  //check password
+  const rightPassword = await bcrypt.compare(
+    req.body.password,
+    UserbyName.password
+  );
+  if (!rightPassword) res.status(400).send("incorrect, try again.");
+
+  //******TODO*********//
+  res.status(200).json({ message: "success" });
+});
+
+//delete user by username API
 router.delete("/deleteUser/:username", async (req, res) => {
   try {
     const removedUser = await User.remove({ username: req.params.username });
@@ -65,4 +88,5 @@ router.delete("/deleteUser/:username", async (req, res) => {
     res.json({ message: err });
   }
 });
+
 module.exports = router;
