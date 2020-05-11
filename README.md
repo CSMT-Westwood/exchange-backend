@@ -17,8 +17,9 @@ The backend repo for exchange
     TOKEN_SECRET='ANY STRING YOU WANT'
 ```  
 4.   Run ``npm start`` to host the server on port 8000.  
+5.   A detailed guide on how to make API calls to the server is in the API documentation down below.
 
-[API references](https://github.com/CSMT-Westwood/exchange-backend/blob/offreq/README.md)  
+[API documentation](APIs.md)  
 [Postman team workspace](https://app.getpostman.com/join-team?invite_code=1605a9ec2a64d98f5ebc7b1dc347c16b)  
 
 ## Express Tutorials
