@@ -18,16 +18,16 @@
 - Request Body:
     ```json
     {
-        "username": <username>,
-        "password": <password>,
-        "email": <email address>
+        "username": "<username>",
+        "password": "<password>",
+        "email": "<email address>"
     }
     ```
 - Response:
     ```json
     {
-        "username": <username>,
-        "email": <email>
+        "username": "<username>",
+        "email": "<email>"
     }
     ```
 ### 2. Login <a name="log-in"></a>
@@ -41,14 +41,14 @@
 - Request Body:
     ```json
     {
-        "name": <username>,
-        "password": <password>
+        "name": "<username>",
+        "password": "<password>"
     }
     ```
 - Response:
     ```json
     {
-        "token": <login_token>
+        "token": "<login_token>"
     }
     ```
 
@@ -59,17 +59,17 @@
     ```json
     {
         "Content-Type": "application/json",
-        "token": <login_token>
+        "token": "<login_token>"
     }
     ```
 - Request Body:
     ```json
     {
-        "title": <title>,
-        "description": <description>,
-        "type": <"offer"_or_"request">,
-        "tag": <tag>,
-        "course": <course>
+        "title": "<title>",
+        "description": "<description>",
+        "type": "<offer_or_request>",
+        "tag": "<tag>",
+        "course": "<course>"
     }
     ```
 - Response:
