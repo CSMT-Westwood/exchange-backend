@@ -4,7 +4,7 @@
    1. [Sign up](#sign-up)
    2. [Login](#log-in)
 2. [Offer / Request](#offreq)
-   1. [Make an offer](#make-an-offer)
+   1. [Make a post](#make-a-post)
 
 ## User Login / Sign up <a name="login"></a>
 ### 1. Sign up <a name="sign-up"></a>
@@ -18,16 +18,16 @@
 - Request Body:
     ```json
     {
-        "username": "<username>",
-        "password": "<password>",
-        "email": "<email address>"
+        "username": <username>,
+        "password": <password>,
+        "email": <email address>
     }
     ```
 - Response:
     ```json
     {
-        "username": "<username>",
-        "email": "<email>"
+        "username": <username>,
+        "email": <email>
     }
     ```
 ### 2. Login <a name="log-in"></a>
@@ -41,17 +41,38 @@
 - Request Body:
     ```json
     {
-        "name": "<username>",
-        "password": "<password>"
+        "name": <username>,
+        "password": <password>
     }
     ```
 - Response:
     ```json
     {
-        "token": "<token>"
+        "token": <login_token>
     }
     ```
 
 ## Offer / Request <a name="offreq"></a>
-### 1. Make an offer <a name="make-an-offer"></a>
-TODO
+### 1. Make a post <a name="make-a-post"></a>
+- End point: ``/post/new``
+- Headers:
+    ```json
+    {
+        "Content-Type": "application/json",
+        "token": <login_token>
+    }
+    ```
+- Request Body:
+    ```json
+    {
+        "title": <title>,
+        "description": <description>,
+        "type": <"offer"_or_"request">,
+        "tag": <tag>,
+        "course": <course>
+    }
+    ```
+- Response:
+    ```
+        "Post created"
+    ```
