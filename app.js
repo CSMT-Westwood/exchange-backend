@@ -6,6 +6,7 @@ require("dotenv/config");
 const bodyParser = require("body-parser");
 const app = express();
 const user = require("./user/user");
+const post = require("./post/post");
 
 // middlewares
 app.use(bodyParser.json());
@@ -13,10 +14,7 @@ app.use(cors());
 
 // routing
 app.use("/user", user);
-
-app.get("/", (req, res) => {
-    res.send("Hello, world!");
-});
+app.use("/post", post);
 
 // suppress the warnings
 mongoose.set("useNewUrlParser", true);
@@ -27,4 +25,6 @@ mongoose.connect(process.env.DB_CONNECTION, () => {
 });
 
 // listening on port 8000
-app.listen(8000);
+app.listen(8000, ()=>{
+    console.log("Listening on port 8000");
+});

@@ -3,11 +3,11 @@ API for user info
 */
 const express = require("express");
 const router = express.Router();
-const validations = require("../input_validations"); //get validation schemas
+const validations = require("./input_validations"); //get validation schemas
 const User = require("../models/User"); //get model
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken"); //jsonwebtoken
-const loggedin = require("../user/verifyToken"); //verifyToken.js
+const loggedin = require("../verifyToken"); //verifyToken.js
 
 //For debugging purpose, return all users in database
 router.get("/", async (req, res) => {
@@ -54,7 +54,7 @@ router.post("/signup", async (req, res) => {
             email: addedUser.email
         });
     } catch (err) {
-        res.json({ message: err });
+        res.status(400).json({ message: err });
     }
 });
 
