@@ -8,7 +8,7 @@
 
 ## User Login / Sign up <a name="login"></a>
 ### 1. Sign up <a name="sign-up"></a>
-- End point: ``/user/signup``
+- End point: ``POST /user/signup``
 - Headers:
     ```json
     {
@@ -31,7 +31,7 @@
     }
     ```
 ### 2. Login <a name="log-in"></a>
-- End point: ``/user/login``
+- End point: ``POST /user/login``
 - Headers:
     ```json
     {
@@ -54,7 +54,7 @@
 
 ## Offer / Request <a name="offreq"></a>
 ### 1. Make a post <a name="make-a-post"></a>
-- End point: ``/post/new``
+- End point: ``POST /post/new``
 - Headers:
     ```json
     {
