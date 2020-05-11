@@ -11,14 +11,15 @@ The backend repo for exchange
 
 1.   Run ``npm install`` to install dependencies.
 2.   Create file named ".env" in the root directory.
-3.   Inside the .env file, put in the following values.
+3.   Inside the .env file, put in the following values.  
 ```
     DB_CONNECTION='ASK TONY FOR THIS'
     TOKEN_SECRET='ANY STRING YOU WANT'
-```
+```  
 4.   Run ``npm start`` to host the server on port 8000.  
 
-[quick API references for now: join the group and find examples under the collection tab ](https://app.getpostman.com/join-team?invite_code=1605a9ec2a64d98f5ebc7b1dc347c16b)
+[API references](https://github.com/CSMT-Westwood/exchange-backend/blob/offreq/README.md)  
+[Postman team workspace](https://app.getpostman.com/join-team?invite_code=1605a9ec2a64d98f5ebc7b1dc347c16b)  
 
 ## Express Tutorials
 
