@@ -12,13 +12,13 @@ const loggedin = require("../verifyToken"); //verifyToken.js
 //For debugging purpose, return all users in database
 router.get("/", async (req, res) => {
     const AllUsers = await User.find();
-    res.send(AllUsers);
+    res.json(AllUsers);
 });
 
 //find user by username. Needs login token in the header
 router.get("/searchUser/:username", loggedin, async (req, res) => {
     const user = await User.find({ username: req.params.username });
-    if (user.length == 0) return res.status(400).send("User not found!");
+    if (user.length == 0) return res.status(404).json({message: "User not found."});
     res.status(200).json(user);
 });
 
@@ -33,13 +33,13 @@ router.post("/signup", async (req, res) => {
     });
     const error = validations.signUpSchema.validate(req.body).error;
     if (error) {
-        return res.status(400).send(error.details[0].message); //send message if input is invalid
+        return res.status(400).json({message: error.details[0].message}); //send message if input is invalid
     }
     //Check duplicates in database
     if (await User.findOne({ username: req.body.username }))
-        return res.status(400).send("The username already exists.");
+        return res.status(409).json({message: "The username already exists."});
     if (await User.findOne({ email: req.body.email }))
-        return res.status(400).send("The email has been registered.");
+        return res.status(409).json({message: "The email has been registered."});
 
     //Hash Password
     const salt = await bcrypt.genSalt();
@@ -64,13 +64,13 @@ router.post("/login", async (req, res) => {
     //check format thru validation
     const error = validations.loginSchema.validate(req.body).error;
     if (error) {
-        return res.status(400).send(error.details[0].message);
+        return res.status(400).json({message: error.details[0].message});
     }
 
     let UserbyName = await User.findOne({ email: req.body.name }); //try email
     if (!UserbyName) {
         UserbyName = await User.findOne({ username: req.body.name }); //try username
-        if (!UserbyName) return res.status(400).send("incorrect, try again."); //if not found, return error
+        if (!UserbyName) return res.status(401).json({message: "User not found."}); //if not found, return error
     }
 
     //check password
@@ -78,7 +78,7 @@ router.post("/login", async (req, res) => {
         req.body.password,
         UserbyName.password
     );
-    if (!rightPassword) return res.status(400).send("incorrect, try again.");
+    if (!rightPassword) return res.status(401).json({message: "Invalid password."});
 
     //Token
     const token = jwt.sign(

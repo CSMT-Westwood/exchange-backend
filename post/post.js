@@ -11,13 +11,13 @@ const validation = require("./input_validations");
 // Get all posts
 router.get("/", async(req, res) => {
     const allPosts = await Post.find();
-    res.send(allPosts);
+    res.json(allPosts);
 })
 // Delete all posts
 router.delete("/", async (req, res) => {
     try {
         await Post.deleteMany({});
-        res.status(418).send("collection emptied");
+        res.status(418).json({message: "Collection emptied."});
     } catch (err) {
         res.json({ message: err });
     }
@@ -30,7 +30,7 @@ router.post("/new", loginRequired, async (req, res) => {
     req.body.course = req.body.course.split(" ").join("").toLowerCase();
     const error = validation.NewPostSchema.validate(req.body).error;
     if (error) {
-        return res.status(400).send(error.details[0].message); //send message if input is invalid
+        return res.status(400).json({message: error.details[0].message});
     }
 
     // create a new post
@@ -47,9 +47,9 @@ router.post("/new", loginRequired, async (req, res) => {
     // save the new object
     try {
         const createdPost = await newPost.save();
-        res.status(200).send("Post created");
+        res.status(200).json({message: "Post created successfully."});
     } catch (err) {
-        res.json({ message: err });
+        res.status(400).json({ message: err });
     }
 })
 
