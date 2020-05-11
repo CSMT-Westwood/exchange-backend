@@ -49,7 +49,10 @@ router.post("/signup", async (req, res) => {
     //Creat a new user
     try {
         const addedUser = await newUser.save();
-        res.status(200).send(addedUser);
+        res.status(200).json({
+            username: addedUser.username,
+            email: addedUser.email
+        });
     } catch (err) {
         res.json({ message: err });
     }
@@ -82,7 +85,7 @@ router.post("/login", async (req, res) => {
         { _id: UserbyName._id, _username: UserbyName.username },
         process.env.TOKEN_SECRET
     );
-    res.header("token", token).json({ message: "logged in!", token: token }); // issue a token to response header
+    res.header("token", token).json({ token: token }); // issue a token to response header
     // res.status(200).json({ message: "success" });
 });
 
