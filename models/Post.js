@@ -12,11 +12,14 @@ publication_date: publication date of the post
 */
 
 const PostSchema = mongoose.Schema({
-    title: {type: String, default: ""},
-    description: {type: String, default: ""},
-    type: String,
-    tag: String,
-    course: {type: String, default: null },
+    typeOfPost: Number,
+    typeOfItem: Number,
+    course: String,
+    itemName: String,
+    condition: Number,
+    description: String,
+    link: String,
+    fulfilled: Number,
     author: String,
     publication_date: Date,
 });

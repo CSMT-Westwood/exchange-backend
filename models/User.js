@@ -11,6 +11,7 @@ const UserSchema = mongoose.Schema({
         last_login: { type: Date, default: Date.UTC(2000, 1, 1, 0, 0, 0, 0) },
         date_of_creation: { type: Date, default: Date.now },
     },
+    posts: [String],
 });
 
 module.exports = mongoose.model("User", UserSchema);
