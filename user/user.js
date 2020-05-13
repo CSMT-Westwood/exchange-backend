@@ -109,7 +109,7 @@ router.get("/posts", loginRequired, async (req, res) => {
     try {
         const user = await User.findOne({_id: req.user._id});
         for (each of user.posts) {
-            postPromises.push(Post.findOne({_id: each}));
+            postPromises.push(Post.findOne({_id: each}).select("-author -__v") );
         }
     } catch (e) {
         console.log(e);

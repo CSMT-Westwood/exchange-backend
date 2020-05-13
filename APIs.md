@@ -4,6 +4,7 @@
 1. [User Login / Sign Up](#login)
    1. [Sign up](#sign-up)
    2. [Login](#log-in)
+   3. [User Posts Lookup](#userPosts)
 2. [Offer / Request](#offreq)
    1. [Make a post](#make-a-post)
 
@@ -64,6 +65,46 @@
     ```
   - ``400 Bad Request``  Cause: invalid user input
   - ``401 Unauthorized``  Cause: invalid credentials
+    ```javascript
+    {
+        "message": "<error_message>"
+    }
+    ```
+
+### 3. User Posts Lookup <a name="userPosts"></a>
+- End point: ``GET /user/posts``
+- Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json",
+        "token": "<login_token>"
+    }
+    ```
+- Request Body:
+    ```
+    Nothing
+    ```
+- Response:
+  - ``200 OK``
+    ```javascript
+    [
+        {
+            "_id": "<post_id>",
+            "typeOfPost": "<0_or_1>",
+            "typeOfItem": "<0_or_1>",
+            "course": "<course_code>",      // when known
+            "itemName": "<item_name>",
+            "condition": "<0-3>",           // when known
+            "description": "<description>",
+            "link": "<link>",               // when known
+            "fulfilled": "<0-2>"            // when known
+            "publication_date": "<Date>"
+        },  
+        // more posts
+    ]
+    ```
+  - ``400 Bad Request``  Cause: invalid user input
+  - ``401 Unauthorized``  Cause: user needs to log in before creating posts
     ```javascript
     {
         "message": "<error_message>"
