@@ -83,11 +83,14 @@
 - Request Body:
     ```json
     {
-        "title": "<title>",
+        "typeOfPost": "<0_or_1>",
+        "typeOfItem": "<0_or_1>",
+        "course": "<course_code>",      // not required
+        "itemName": "<item_name>",
+        "condition": "<0-3>",           // not required
         "description": "<description>",
-        "type": "<offer_or_request>",
-        "tag": "<tag>",
-        "course": "<course>"
+        "link": "<link>",               // not required
+        "fulfilled": "<0-2>"            // not required
     }
     ```
 - Response:

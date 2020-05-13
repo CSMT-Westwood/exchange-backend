@@ -29,7 +29,6 @@ router.delete("/", async (req, res) => {
 // Creating a new post
 router.post("/new", loginRequired, async (req, res) => {
     // validate input
-    req.body.type = req.body.type.toLowerCase();
     req.body.course = req.body.course.split(" ").join("").toLowerCase();
     const error = validation.NewPostSchema.validate(req.body).error;
     if (error) {
@@ -38,11 +37,14 @@ router.post("/new", loginRequired, async (req, res) => {
 
     // create a new post
     const newPost = new Post({
-        title: req.body.title,
-        description: req.body.description,
-        type: req.body.type.toLowerCase(),
-        tag: req.body.tag.toLowerCase(),
+        typeOfPost: req.body.typeOfPost,
+        typeOfItem: req.body.typeOfItem,
         course: req.body.course,
+        itemName: req.body.itemName,
+        condition: req.body.condition,
+        description: req.body.description,
+        link: req.body.link,
+        fulfilled: req.body.fulfilled,
         author: req.user._id,
         publication_date: Date.now()
     });
