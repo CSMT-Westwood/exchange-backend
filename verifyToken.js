@@ -7,12 +7,12 @@ function verify(req, res, next) {
     //if token exists:
     try {
         var verifiedObj = jwt.verify(token, process.env.TOKEN_SECRET);
+        console.log(`User ${verifiedObj._id} has made a request`);
+        req.user = verifiedObj;
+        next();
     } catch (e) {
         return res.status(401).json({message: "Invalid Token!"});
     }
-    console.log(`User ${verifiedObj._id} has made a request`);
-    req.user = verifiedObj;
-    next();
 }
 
 module.exports = verify;
