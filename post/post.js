@@ -17,6 +17,14 @@ router.get("/", async(req, res) => {
 // Delete all posts
 router.delete("/", async (req, res) => {
     try {
+        const allPosts = await Post.find();
+        for (each of allPosts) {
+            User.findOne({_id: each.author})
+                .then(user => {
+                    user.posts = [];
+                    user.save();
+                });
+        }
         await Post.deleteMany({});
         res.status(418).json({message: "Collection emptied."});
     } catch (err) {

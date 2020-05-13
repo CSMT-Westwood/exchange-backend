@@ -5,9 +5,10 @@ const express = require("express");
 const router = express.Router();
 const validations = require("./input_validations"); //get validation schemas
 const User = require("../models/User"); //get model
+const Post = require("../models/Post");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken"); //jsonwebtoken
-const loggedin = require("../verifyToken"); //verifyToken.js
+const loginRequired = require("../verifyToken"); //verifyToken.js
 
 //For debugging purpose, return all users in database
 router.get("/", async (req, res) => {
@@ -16,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 //find user by username. Needs login token in the header
-router.get("/searchUser/:username", loggedin, async (req, res) => {
+router.get("/searchUser/:username", loginRequired, async (req, res) => {
     const user = await User.find({ username: req.params.username });
     if (user.length == 0) return res.status(404).json({message: "User not found."});
     res.status(200).json(user);
@@ -100,5 +101,28 @@ router.delete("/deleteUser/:username", async (req, res) => {
         res.json({ message: err });
     }
 });
+
+
+// GET USER'S POSTS // GET USER'S POSTS // GET USER'S POSTS // GET USER'S POSTS
+router.get("/posts", loginRequired, async (req, res) => {
+    const postPromises = [];
+    try {
+        const user = await User.findOne({_id: req.user._id});
+        for (each of user.posts) {
+            postPromises.push(Post.findOne({_id: each}));
+        }
+    } catch (e) {
+        console.log(e);
+        res.status(401).json({message: e});
+    }
+
+    try {
+        const posts = await Promise.all(postPromises);
+        res.status(200).json(posts);
+    } catch (e) {
+        console.log(e);
+        res.status(400).json({message: "Cannot find the post."});
+    }
+})
 
 module.exports = router;
