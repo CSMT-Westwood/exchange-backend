@@ -67,9 +67,9 @@ router.post("/login", async (req, res) => {
         return res.status(400).json({message: error.details[0].message});
     }
 
-    let UserbyName = await User.findOne({ email: req.body.name }); //try email
+    let UserbyName = await User.findOne({ email: req.body.username }); //try email
     if (!UserbyName) {
-        UserbyName = await User.findOne({ username: req.body.name }); //try username
+        UserbyName = await User.findOne({ username: req.body.username }); //try username
         if (!UserbyName) return res.status(401).json({message: "User not found."}); //if not found, return error
     }
 
