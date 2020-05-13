@@ -11,13 +11,13 @@
 ### 1. Sign up <a name="sign-up"></a>
 - End point: ``POST /user/signup``
 - Headers:
-    ```json
+    ```javascript
     {
         "Content-Type": "application/json"
     }
     ```
 - Request Body:
-    ```json
+    ```javascript
     {
         "username": "<username>",
         "password": "<password>",
@@ -26,7 +26,7 @@
     ```
 - Response:
   - ``200 OK``
-    ```json
+    ```javascript
     {
         "username": "<username>",
         "email": "<email>"
@@ -34,7 +34,7 @@
     ```
   - ``400 Bad Request`` Cause: invalid user input
   - ``409 Conflict``  Cause: username already exists
-    ```json
+    ```javascript
     {
         "message": "<error_message>"
     }
@@ -43,13 +43,13 @@
 ### 2. Login <a name="log-in"></a>
 - End point: ``POST /user/login``
 - Headers:
-    ```json
+    ```javascript
     {
         "Content-Type": "application/json"
     }
     ```
 - Request Body:
-    ```json
+    ```javascript
     {
         "username": "<username>",
         "password": "<password>"
@@ -57,14 +57,14 @@
     ```
 - Response:
   - ``200 OK``
-    ```json
+    ```javascript
     {
         "token": "<login_token>"
     }
     ```
   - ``400 Bad Request``  Cause: invalid user input
   - ``401 Unauthorized``  Cause: invalid credentials
-    ```json
+    ```javascript
     {
         "message": "<error_message>"
     }
@@ -74,14 +74,14 @@
 ### 1. Make a post <a name="make-a-post"></a>
 - End point: ``POST /post/new``
 - Headers:
-    ```json
+    ```javascript
     {
         "Content-Type": "application/json",
         "token": "<login_token>"
     }
     ```
 - Request Body:
-    ```json
+    ```javascript
     {
         "typeOfPost": "<0_or_1>",
         "typeOfItem": "<0_or_1>",
@@ -95,14 +95,14 @@
     ```
 - Response:
   - ``200 OK``
-    ```json
+    ```javascript
     {
         "message": "Post created successfully."
     }
     ```
   - ``400 Bad Request``  Cause: invalid user input
   - ``401 Unauthorized``  Cause: user needs to log in before creating posts
-    ```json
+    ```javascript
     {
         "message": "<error_message>"
     }
