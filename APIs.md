@@ -51,7 +51,7 @@
 - Request Body:
     ```json
     {
-        "name": "<username>",
+        "username": "<username>",
         "password": "<password>"
     }
     ```
