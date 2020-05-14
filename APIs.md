@@ -5,7 +5,7 @@
    1. [Sign up](#sign-up)
    2. [Login](#log-in)
    3. [User Posts Lookup](#userPosts)
-   4. [Update User Profile]($user-update)
+   4. [Update User Profile](#user-update)
 2. [Offer / Request](#offreq)
    1. [Make a post](#make-a-post)
 
