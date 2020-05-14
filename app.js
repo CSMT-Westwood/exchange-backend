@@ -19,6 +19,7 @@ app.use("/post", post);
 // suppress the warnings
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useUnifiedTopology", true);
+mongoose.set("useFindAndModify", false);
 // connect to db
 mongoose.connect(process.env.DB_CONNECTION, () => {
     console.log("connected to DB!");
