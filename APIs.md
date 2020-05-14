@@ -1,54 +1,148 @@
 # API Documentation
 ## Table of Content
-1. [User Login / Sign Up](#login)
+0. [A 6-min guide on how to make requests to the server](https://www.youtube.com/watch?v=cuEtnrL9-H0)
+1. [User Related](#login)
    1. [Sign up](#sign-up)
    2. [Login](#log-in)
+   3. [User Posts Lookup](#userPosts)
+   4. [Update User Profile](#user-update)
 2. [Offer / Request](#offreq)
    1. [Make a post](#make-a-post)
 
-## User Login / Sign up <a name="login"></a>
+## User Related <a name="login"></a>
 ### 1. Sign up <a name="sign-up"></a>
 - End point: ``POST /user/signup``
 - Headers:
-    ```json
+    ```javascript
     {
         "Content-Type": "application/json"
     }
     ```
 - Request Body:
-    ```json
+    ```javascript
     {
         "username": "<username>",
         "password": "<password>",
-        "email": "<email address>"
+        "email": "<email_address>"
     }
     ```
 - Response:
-    ```json
+  - ``200 OK``
+    ```javascript
     {
         "username": "<username>",
         "email": "<email>"
     }
     ```
+  - ``400 Bad Request`` Cause: invalid user input
+  - ``409 Conflict``  Cause: username already exists
+    ```javascript
+    {
+        "message": "<error_message>"
+    }
+    ```
+
 ### 2. Login <a name="log-in"></a>
 - End point: ``POST /user/login``
 - Headers:
-    ```json
+    ```javascript
     {
         "Content-Type": "application/json"
     }
     ```
 - Request Body:
-    ```json
+    ```javascript
     {
-        "name": "<username>",
+        "username": "<username>",
         "password": "<password>"
     }
     ```
 - Response:
-    ```json
+  - ``200 OK``
+    ```javascript
     {
         "token": "<login_token>"
+    }
+    ```
+  - ``400 Bad Request``  Cause: invalid user input
+  - ``401 Unauthorized``  Cause: invalid credentials
+    ```javascript
+    {
+        "message": "<error_message>"
+    }
+    ```
+
+### 3. User Posts Lookup <a name="userPosts"></a>
+- End point: ``GET /user/posts``
+- Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json",
+        "token": "<login_token>"
+    }
+    ```
+- Request Body:
+    ```
+    Nothing
+    ```
+- Response:
+  - ``200 OK``
+    ```javascript
+    [
+        {
+            "_id": "<post_id>",
+            "typeOfPost": "<0_or_1>",
+            "typeOfItem": "<0_or_1>",
+            "course": "<course_code>",      // when known
+            "itemName": "<item_name>",
+            "condition": "<0-3>",           // when known
+            "description": "<description>",
+            "link": "<link>",               // when known
+            "fulfilled": "<0-2>"            // when known
+            "publication_date": "<Date>"
+        },  
+        // more posts
+    ]
+    ```
+  - ``400 Bad Request``  Cause: invalid user input
+  - ``401 Unauthorized``  Cause: user needs to log in before creating posts
+    ```javascript
+    {
+        "message": "<error_message>"
+    }
+    ```
+### 4. Update User Profile <a name="user-update"></a>
+- End point: ``PATCH /user/update``
+- Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json"
+    }
+    ```
+- Request Body:
+    ```javascript
+    {
+        "username": "<username>",                   // optional
+        "email": "<email_address>",                 // optional
+        "preferences": "<array_of_preferences>",    // optional
+        "rp": "<new_rp_count>"                      // optional
+    }
+    ```
+- Response:
+  - ``200 OK``
+    ```javascript
+    {
+        "username": "<new_username>",
+        "email": "<new_email>",
+        "rp": "<new_rp>",
+        "preferences": "<new_array_of_preferences>"
+    }
+    ```
+  - ``400 Bad Request`` Cause: invalid user input
+  - ``409 Conflict``  Cause: username/email already exists
+    ```javascript
+    {
+        "message": "<error_message>"
     }
     ```
 
@@ -56,23 +150,36 @@
 ### 1. Make a post <a name="make-a-post"></a>
 - End point: ``POST /post/new``
 - Headers:
-    ```json
+    ```javascript
     {
         "Content-Type": "application/json",
         "token": "<login_token>"
     }
     ```
 - Request Body:
-    ```json
+    ```javascript
     {
-        "title": "<title>",
+        "typeOfPost": "<0_or_1>",
+        "typeOfItem": "<0_or_1>",
+        "course": "<course_code>",      // not required
+        "itemName": "<item_name>",
+        "condition": "<0-3>",           // not required
         "description": "<description>",
-        "type": "<offer_or_request>",
-        "tag": "<tag>",
-        "course": "<course>"
+        "link": "<link>",               // not required
+        "fulfilled": "<0-2>"            // not required
     }
     ```
 - Response:
+  - ``200 OK``
+    ```javascript
+    {
+        "message": "Post created successfully."
+    }
     ```
-        "Post created"
+  - ``400 Bad Request``  Cause: invalid user input
+  - ``401 Unauthorized``  Cause: user needs to log in before creating posts
+    ```javascript
+    {
+        "message": "<error_message>"
+    }
     ```
