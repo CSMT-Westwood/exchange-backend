@@ -44,6 +44,7 @@ router.post("/new", loginRequired, async (req, res) => {
     }
 
     // create a new post
+    // NOT SURE IF THIS IS THE BEST WAY TO DO THIS
     const newPost = new Post({
         typeOfPost: req.body.typeOfPost,
         typeOfItem: req.body.typeOfItem,

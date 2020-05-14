@@ -1,14 +1,15 @@
 # API Documentation
 ## Table of Content
 0. [A 6-min guide on how to make requests to the server](https://www.youtube.com/watch?v=cuEtnrL9-H0)
-1. [User Login / Sign Up](#login)
+1. [User Related](#login)
    1. [Sign up](#sign-up)
    2. [Login](#log-in)
    3. [User Posts Lookup](#userPosts)
+   4. [Update User Profile]($user-update)
 2. [Offer / Request](#offreq)
    1. [Make a post](#make-a-post)
 
-## User Login / Sign up <a name="login"></a>
+## User Related <a name="login"></a>
 ### 1. Sign up <a name="sign-up"></a>
 - End point: ``POST /user/signup``
 - Headers:
@@ -105,6 +106,40 @@
     ```
   - ``400 Bad Request``  Cause: invalid user input
   - ``401 Unauthorized``  Cause: user needs to log in before creating posts
+    ```javascript
+    {
+        "message": "<error_message>"
+    }
+    ```
+### 4. Update User Profile <a name="user-update"></a>
+- End point: ``PATCH /user/update``
+- Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json"
+    }
+    ```
+- Request Body:
+    ```javascript
+    {
+        "username": "<username>",                   // optional
+        "email": "<email_address>",                 // optional
+        "preferences": "<array_of_preferences>",    // optional
+        "rp": "<new_rp_count>"                      // optional
+    }
+    ```
+- Response:
+  - ``200 OK``
+    ```javascript
+    {
+        "username": "<new_username>",
+        "email": "<new_email>",
+        "rp": "<new_rp>",
+        "preferences": "<new_array_of_preferences>"
+    }
+    ```
+  - ``400 Bad Request`` Cause: invalid user input
+  - ``409 Conflict``  Cause: username/email already exists
     ```javascript
     {
         "message": "<error_message>"

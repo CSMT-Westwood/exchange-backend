@@ -12,6 +12,7 @@ const UserSchema = mongoose.Schema({
         date_of_creation: { type: Date, default: Date.now },
     },
     posts: [String],
+    rp: {type: Number, default: 10},
 });
 
 module.exports = mongoose.model("User", UserSchema);

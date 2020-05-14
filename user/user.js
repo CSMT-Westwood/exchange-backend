@@ -25,13 +25,7 @@ router.get("/searchUser/:username", loginRequired, async (req, res) => {
 
 /******User Signup API******/
 router.post("/signup", async (req, res) => {
-    const newUser = new User({
-        username: req.body.username,
-        password: req.body.password,
-        email: req.body.email,
-        preferences: req.body.preferences,
-        info: req.body.info,
-    });
+    const newUser = new User({...req.body});
     const error = validations.signUpSchema.validate(req.body).error;
     if (error) {
         return res.status(400).json({message: error.details[0].message}); //send message if input is invalid
@@ -123,6 +117,43 @@ router.get("/posts", loginRequired, async (req, res) => {
         console.log(e);
         res.status(400).json({message: "Cannot find the post."});
     }
-})
+});
+
+// UPDATE USER API // UPDATE USER API // UPDATE USER API // UPDATE USER API
+router.patch("/update", loginRequired, async (req, res) => {
+    const error = validations.updateSchema.validate(req.body).error;
+    if (error) {
+        return res.status(400).json({message: error.details[0].message});
+    }
+
+    // check username / email availability
+    if (req.body.username) {
+        usernameCheck = await User.findOne({
+            username: req.body.username,
+            _id: { $ne: req.user._id }
+        });
+        if (usernameCheck) {
+            return res.status(409).json({ message: "Username already exists!" });
+        }
+    }
+    if (req.body.email) {
+        emailCheck = await User.findOne({
+            email: req.body.email,
+            _id: { $ne: req.user._id }
+        });
+        if (emailCheck) {
+            return res.status(409).json({ message: "Email already exists!" });
+        }
+    }
+
+    try {
+        updated = await User.findOneAndUpdate({_id: req.user._id}, req.body, {new: true})
+                            .select("preferences username rp email -_id");
+        res.status(200).json(updated);
+    } catch (e) {
+        console.log(e);
+        return res.status(400).json({ message: "Cannot update!" });
+    }
+});
 
 module.exports = router;
