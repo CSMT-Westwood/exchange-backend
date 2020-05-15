@@ -5,7 +5,8 @@
    1. [Sign up](#sign-up)
    2. [Login](#log-in)
    3. [User Posts Lookup](#userPosts)
-   4. [Update User Profile](#user-update)
+   4. [Get Logged-in User Profile](#get-self-profile)
+   5. [Update User Profile](#user-update)
 2. [Offer / Request](#offreq)
    1. [Make a post](#make-a-post)
 
@@ -111,12 +112,42 @@
         "message": "<error_message>"
     }
     ```
-### 4. Update User Profile <a name="user-update"></a>
+
+### 4. Get Logged-in User Profile <a name="get-self-profile"></a>
+- End point: ``GET /user/self``
+- Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json",
+        "token": "<login_token>"
+    }
+    ```
+- Request Body: ``None needed``
+- Response:
+  - ``200 OK``
+    ```javascript
+    {
+        "preferences": "<array_of_preferences>",
+        "posts": "<array_of_posts_by_user>",
+        "rp": "<rp>",
+        "username": "<username>",
+        "email": "<email>"
+    }
+    ```
+  - ``400 Bad Request``: should never happen
+    ```javascript
+    {
+        "message": "<error_message>"
+    }
+    ```
+
+### 5. Update User Profile <a name="user-update"></a>
 - End point: ``PATCH /user/update``
 - Headers:
     ```javascript
     {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "token": "<login_token>"
     }
     ```
 - Request Body:

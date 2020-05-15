@@ -119,6 +119,17 @@ router.get("/posts", loginRequired, async (req, res) => {
     }
 });
 
+// GET SELF API // GET SELF API // GET SELF API // GET SELF API // GET SELF API
+router.get("/self", loginRequired, async (req, res) => {
+    try {
+        const user = await User.findOne({_id: req.user._id}).select("-password -__v -info -_id");
+        return res.status(200).json(user);
+    } catch (e) {
+        console.log(e);
+        res.status(400).json({ message: "Bad Request." });
+    }
+})
+
 // UPDATE USER API // UPDATE USER API // UPDATE USER API // UPDATE USER API
 router.patch("/update", loginRequired, async (req, res) => {
     const error = validations.updateSchema.validate(req.body).error;
