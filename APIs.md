@@ -62,6 +62,10 @@
   - ``200 OK``
     ```javascript
     {
+        "preferences": "<array_of_preferences>",
+        "rp": "<rp>",
+        "username": "<username>",
+        "email": "<email>",
         "token": "<login_token>"
     }
     ```
