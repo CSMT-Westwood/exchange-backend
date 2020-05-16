@@ -65,7 +65,7 @@ router.post("/new", loginRequired, async (req, res) => {
         ]);
         correspondingUser.posts.push(postCreated._id);
         await correspondingUser.save();
-        res.status(200).json({message: "Post created successfully."});
+        res.status(200).json(newPost);
     } catch (err) {
         console.log(err);
         res.status(400).json({ message: err });

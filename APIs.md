@@ -204,7 +204,18 @@
   - ``200 OK``
     ```javascript
     {
-        "message": "Post created successfully."
+        "_id": "<post_id>",
+        "typeOfPost": "<0_or_1>",
+        "typeOfItem": "<0_or_1>",
+        "course": "<course_code>",      // if applicable
+        "itemName": "<item_name>",
+        "condition": "<0-3>",           // if applicable
+        "description": "<description>",
+        "link": "<link>",               // if applicable
+        "fulfilled": "<0-2>",           // if applicable
+        "publication_date": "<publication_date>",
+        "__v": "<ignore_this>",
+        "author": "<author_id>"
     }
     ```
   - ``400 Bad Request``  Cause: invalid user input
