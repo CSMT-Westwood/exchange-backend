@@ -75,12 +75,15 @@ router.post("/login", async (req, res) => {
     );
     if (!rightPassword) return res.status(401).json({message: "Invalid password."});
 
-    //Token
+    // Getting ready to return
+    UserbyName = UserbyName.toObject();
     const token = jwt.sign(
         { _id: UserbyName._id, _username: UserbyName.username },
         process.env.TOKEN_SECRET
     );
-    res.header("token", token).json({ token: token }); // issue a token to response header
+    UserbyName.token = token;
+    const {info, posts, _id, password, __v, ...responseJSON} = UserbyName;
+    res.status(200).json(responseJSON); // issue a token to response header
     // res.status(200).json({ message: "success" });
 });
 
