@@ -21,16 +21,17 @@ router.post("/avatar/", upload.single("image"), async (req, res) => {
         buffer
     );
     try {
+        let resp;
         const response = await cloudinary.v2.uploader.upload(
             datastring.content,
             image.avatarConfig,
             (err, result) => {
-                const resp = result;
+                resp = result;
             }
         );
         return res.status(200).json(resp);
     } catch (error) {
-        res.status(error.http_code).json(error);
+        res.status(400).json(error);
     }
 });
 
