@@ -14,11 +14,13 @@ function configImageCloud() {
 }
 
 //Avatar image transformation
-const avatarTrans = {
+const avatarConfig = {
     folder: "avatar",
     allowedFormats: ["jpg", "png"],
-    transformation: [{ width: 500, height: 500, crop: "limit" }],
+    transformation: [
+        { width: 150, height: 150, crop: "limit", gravity: "face" },
+    ],
 };
 
-module.exports.avatarTrans = avatarTrans;
+module.exports.avatarConfig = avatarConfig;
 module.exports.configImageCloud = configImageCloud;
