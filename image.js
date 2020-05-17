@@ -18,7 +18,7 @@ const avatarConfig = {
     folder: "avatar",
     allowedFormats: ["jpg", "png"],
     transformation: [
-        { width: 150, height: 150, crop: "thumb", gravity: "face" },
+        { width: 150, height: 150, crop: "thumb", gravity: "face" }, //auto-crop, focus on face
     ],
 };
 
