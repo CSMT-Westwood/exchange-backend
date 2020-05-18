@@ -9,18 +9,23 @@ The backend repo for exchange
 | `npm install` | install dependencies                            |
 |  `npm start`  | start the backend server listening on port 8000 |
 
-1.   Run ``npm install`` to install dependencies.
-2.   Create file named ".env" in the root directory.
-3.   Inside the .env file, put in the following values.  
+1.  Run `npm install` to install dependencies.
+2.  Create file named ".env" in the root directory.
+3.  Inside the .env file, put in the following values.
+
 ```
     DB_CONNECTION='ASK TONY FOR THIS'
     TOKEN_SECRET='ANY STRING YOU WANT'
-```  
-4.   Run ``npm start`` to host the server on port 8000.  
-5.   A detailed guide on how to make API calls to the server is in the API documentation down below.
+    CLOUDINARY_NAME=ASKFRANK
+    CLOUDINARY_KEY=ASKFRANK
+    CLOUDINARY_SECRET=ASKFRANK
+```
+
+4.  Run `npm start` to host the server on port 8000.
+5.  A detailed guide on how to make API calls to the server is in the API documentation down below.
 
 [API documentation](APIs.md)  
-[Postman team workspace](https://app.getpostman.com/join-team?invite_code=1605a9ec2a64d98f5ebc7b1dc347c16b)  
+[Postman team workspace](https://app.getpostman.com/join-team?invite_code=1605a9ec2a64d98f5ebc7b1dc347c16b)
 
 ## Express Tutorials
 
