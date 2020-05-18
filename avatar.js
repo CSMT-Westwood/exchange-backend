@@ -35,25 +35,44 @@ router.post("/avatar/:username", upload.single("image"), async (req, res) => {
         );
 
         //update avatar url
-        const update = await updateUserAvatar(req.params.username, resp.url); //update is a document for the user
-        //console.log(update);
-        return res.status(200).json({
-            username: update.username,
-            url: resp.url,
-            width: resp.width,
-            height: resp.height,
-        });
-    } catch (error) {
-        res.status(400).json(error);
+        try {
+            const old_image_id = user.avatar_ID;
+            if (old_image_id !== null) {
+                //delete the old image
+                try {
+                    const del = await cloudinary.v2.api.delete_resources(
+                        old_image_id
+                    );
+                } catch (err) {
+                    return res.status(400).json(err);
+                }
+            }
+            const update = await updateUserAvatar(
+                req.params.username,
+                resp.url,
+                resp.public_id
+            ); //update is the unupdated version of the user
+
+            return res.status(200).json({
+                username: update.username,
+                url: resp.url,
+                width: resp.width,
+                height: resp.height,
+            });
+        } catch (error) {
+            res.status(400).json(error);
+        }
+    } catch (err) {
+        res.status(400).json(err);
     }
 });
 
 //update user avatar url
-async function updateUserAvatar(username, url) {
+async function updateUserAvatar(username, url, id) {
     try {
         const res = await User.findOneAndUpdate(
             { username: username },
-            { avatar: url }
+            { avatar: url, avatar_ID: id }
         );
         return res;
     } catch (err) {

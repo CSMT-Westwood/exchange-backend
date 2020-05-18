@@ -14,6 +14,7 @@ const UserSchema = mongoose.Schema({
     posts: [String],
     rp: { type: Number, default: 10 },
     avatar: { type: String, default: null }, //url of avatar
+    avatar_ID: { type: String, default: null }, //the publid_id for avatar in the cloud. Used only for back-end implementation
 });
 
 module.exports = mongoose.model("User", UserSchema);

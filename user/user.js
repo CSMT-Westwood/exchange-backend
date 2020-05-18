@@ -19,22 +19,27 @@ router.get("/", async (req, res) => {
 //find user by username. Needs login token in the header
 router.get("/searchUser/:username", loginRequired, async (req, res) => {
     const user = await User.find({ username: req.params.username });
-    if (user.length == 0) return res.status(404).json({message: "User not found."});
+    if (user.length == 0)
+        return res.status(404).json({ message: "User not found." });
     res.status(200).json(user);
 });
 
 /******User Signup API******/
 router.post("/signup", async (req, res) => {
-    const newUser = new User({...req.body});
+    const newUser = new User({ ...req.body });
     const error = validations.signUpSchema.validate(req.body).error;
     if (error) {
-        return res.status(400).json({message: error.details[0].message}); //send message if input is invalid
+        return res.status(400).json({ message: error.details[0].message }); //send message if input is invalid
     }
     //Check duplicates in database
     if (await User.findOne({ username: req.body.username }))
-        return res.status(409).json({message: "The username already exists."});
+        return res
+            .status(409)
+            .json({ message: "The username already exists." });
     if (await User.findOne({ email: req.body.email }))
-        return res.status(409).json({message: "The email has been registered."});
+        return res
+            .status(409)
+            .json({ message: "The email has been registered." });
 
     //Hash Password
     const salt = await bcrypt.genSalt();
@@ -46,7 +51,7 @@ router.post("/signup", async (req, res) => {
         const addedUser = await newUser.save();
         res.status(200).json({
             username: addedUser.username,
-            email: addedUser.email
+            email: addedUser.email,
         });
     } catch (err) {
         res.status(400).json({ message: err });
@@ -59,13 +64,14 @@ router.post("/login", async (req, res) => {
     //check format thru validation
     const error = validations.loginSchema.validate(req.body).error;
     if (error) {
-        return res.status(400).json({message: error.details[0].message});
+        return res.status(400).json({ message: error.details[0].message });
     }
 
     let UserbyName = await User.findOne({ email: req.body.username }); //try email
     if (!UserbyName) {
         UserbyName = await User.findOne({ username: req.body.username }); //try username
-        if (!UserbyName) return res.status(401).json({message: "User not found."}); //if not found, return error
+        if (!UserbyName)
+            return res.status(401).json({ message: "User not found." }); //if not found, return error
     }
 
     //check password
@@ -73,7 +79,8 @@ router.post("/login", async (req, res) => {
         req.body.password,
         UserbyName.password
     );
-    if (!rightPassword) return res.status(401).json({message: "Invalid password."});
+    if (!rightPassword)
+        return res.status(401).json({ message: "Invalid password." });
 
     // Getting ready to return
     UserbyName = UserbyName.toObject();
@@ -82,7 +89,7 @@ router.post("/login", async (req, res) => {
         process.env.TOKEN_SECRET
     );
     UserbyName.token = token;
-    const {info, posts, _id, password, __v, ...responseJSON} = UserbyName;
+    const { info, posts, _id, password, __v, ...responseJSON } = UserbyName;
     res.status(200).json(responseJSON); // issue a token to response header
     // res.status(200).json({ message: "success" });
 });
@@ -99,18 +106,19 @@ router.delete("/deleteUser/:username", async (req, res) => {
     }
 });
 
-
 // GET USER'S POSTS // GET USER'S POSTS // GET USER'S POSTS // GET USER'S POSTS
 router.get("/posts", loginRequired, async (req, res) => {
     const postPromises = [];
     try {
-        const user = await User.findOne({_id: req.user._id});
+        const user = await User.findOne({ _id: req.user._id });
         for (each of user.posts) {
-            postPromises.push(Post.findOne({_id: each}).select("-author -__v") );
+            postPromises.push(
+                Post.findOne({ _id: each }).select("-author -__v")
+            );
         }
     } catch (e) {
         console.log(e);
-        res.status(401).json({message: e});
+        res.status(401).json({ message: e });
     }
 
     try {
@@ -118,42 +126,46 @@ router.get("/posts", loginRequired, async (req, res) => {
         res.status(200).json(posts);
     } catch (e) {
         console.log(e);
-        res.status(400).json({message: "Cannot find the post."});
+        res.status(400).json({ message: "Cannot find the post." });
     }
 });
 
 // GET SELF API // GET SELF API // GET SELF API // GET SELF API // GET SELF API
 router.get("/self", loginRequired, async (req, res) => {
     try {
-        const user = await User.findOne({_id: req.user._id}).select("-password -__v -info -_id");
+        const user = await User.findOne({ _id: req.user._id }).select(
+            "-password -__v -info -_id"
+        );
         return res.status(200).json(user);
     } catch (e) {
         console.log(e);
         res.status(400).json({ message: "Bad Request." });
     }
-})
+});
 
 // UPDATE USER API // UPDATE USER API // UPDATE USER API // UPDATE USER API
 router.patch("/update", loginRequired, async (req, res) => {
     const error = validations.updateSchema.validate(req.body).error;
     if (error) {
-        return res.status(400).json({message: error.details[0].message});
+        return res.status(400).json({ message: error.details[0].message });
     }
 
     // check username / email availability
     if (req.body.username) {
         usernameCheck = await User.findOne({
             username: req.body.username,
-            _id: { $ne: req.user._id }
+            _id: { $ne: req.user._id },
         });
         if (usernameCheck) {
-            return res.status(409).json({ message: "Username already exists!" });
+            return res
+                .status(409)
+                .json({ message: "Username already exists!" });
         }
     }
     if (req.body.email) {
         emailCheck = await User.findOne({
             email: req.body.email,
-            _id: { $ne: req.user._id }
+            _id: { $ne: req.user._id },
         });
         if (emailCheck) {
             return res.status(409).json({ message: "Email already exists!" });
@@ -161,8 +173,9 @@ router.patch("/update", loginRequired, async (req, res) => {
     }
 
     try {
-        updated = await User.findOneAndUpdate({_id: req.user._id}, req.body, {new: true})
-                            .select("preferences username rp email -_id");
+        updated = await User.findOneAndUpdate({ _id: req.user._id }, req.body, {
+            new: true,
+        }).select("preferences username rp email -_id");
         res.status(200).json(updated);
     } catch (e) {
         console.log(e);
