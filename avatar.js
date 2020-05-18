@@ -16,13 +16,13 @@ const upload = multer({ storage: storage });
 //requires login, user is identified only with token
 router.post(
     "/avatar/",
-    loginRequired,
-    upload.single("image"),
+    [loginRequired, upload.single("image")],
     async (req, res) => {
         //check if user exists
         const user = await User.findOne({ username: req.user._username }); //extract req.user
         if (!user) return res.status(401).json({ message: "User not found." });
-
+        if (req.file === undefined)
+            return res.status(400).json({ message: "Error: No file uploaded" });
         const buffer = req.file.buffer;
         datastring = bufferParser.format(
             //convert buffer to datauri
@@ -66,7 +66,6 @@ router.post(
                     height: resp.height,
                 });
             } catch (error) {
-                console.log("yes");
                 res.status(400).json({ message: "unknown error1" });
             }
         } catch (err) {
