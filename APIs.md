@@ -223,6 +223,8 @@
     }
     ```
 
+    Note: The avatar url is also updated in the corresponding user object
+
     `400 Bad Request`
 
     ```javascript
