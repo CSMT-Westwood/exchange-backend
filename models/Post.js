@@ -24,4 +24,6 @@ const PostSchema = mongoose.Schema({
     publication_date: Date,
 });
 
+PostSchema.index({course: "text", itemName: "text"});
+
 module.exports = mongoose.model("Post", PostSchema);
