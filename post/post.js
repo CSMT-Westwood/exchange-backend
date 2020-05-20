@@ -10,23 +10,22 @@ const validation = require("./input_validations");
 
 // FOR TESTING PURPOSES // FOR TESTING PURPOSES // FOR TESTING PURPOSES
 // Get all posts
-router.get("/", async(req, res) => {
+router.get("/", async (req, res) => {
     const allPosts = await Post.find();
     res.json(allPosts);
-})
+});
 // Delete all posts
 router.delete("/", async (req, res) => {
     try {
         const allPosts = await Post.find();
         for (each of allPosts) {
-            User.findOne({_id: each.author})
-                .then(user => {
-                    user.posts = [];
-                    user.save();
-                });
+            User.findOne({ _id: each.author }).then((user) => {
+                user.posts = [];
+                user.save();
+            });
         }
         await Post.deleteMany({});
-        res.status(418).json({message: "Collection emptied."});
+        res.status(418).json({ message: "Collection emptied." });
     } catch (err) {
         res.json({ message: err });
     }
@@ -40,10 +39,13 @@ router.post("/new", loginRequired, async (req, res) => {
     req.body.course = req.body.course.split(" ").join("").toLowerCase();
     console.log(req.body.course);
     let courseNumberI = req.body.course.search(/[0-9]/g);
-    req.body.course = req.body.course.substr(0, courseNumberI) + " " + req.body.course.substr(courseNumberI);
+    req.body.course =
+        req.body.course.substr(0, courseNumberI) +
+        " " +
+        req.body.course.substr(courseNumberI);
     const error = validation.NewPostSchema.validate(req.body).error;
     if (error) {
-        return res.status(400).json({message: error.details[0].message});
+        return res.status(400).json({ message: error.details[0].message });
     }
 
     // create a new post
@@ -58,13 +60,14 @@ router.post("/new", loginRequired, async (req, res) => {
         link: req.body.link,
         fulfilled: req.body.fulfilled,
         author: req.user._id,
-        publication_date: Date.now()
+        publication_date: Date.now(),
     });
 
     // save the new object
     try {
         const [postCreated, correspondingUser] = await Promise.all([
-            newPost.save(), User.findOne({_id: req.user._id})
+            newPost.save(),
+            User.findOne({ _id: req.user._id }),
         ]);
         correspondingUser.posts.push(postCreated._id);
         await correspondingUser.save();
@@ -73,29 +76,36 @@ router.post("/new", loginRequired, async (req, res) => {
         console.log(err);
         res.status(400).json({ message: err });
     }
-})
+});
 
 // Search for posts
 router.get("/search", async (req, res) => {
+    if (Object.keys(req.query).length === 0)
+        return res.status(400).json({ message: "Error: No query" });
     // format the course name in the search query
     let typeOfItem = parseInt(req.query.typeOfItem);
     let queryText = req.query.query;
     let tempIndex = queryText.search(/[A-Za-z][0-9]/);
-    queryText = queryText.substr(0, tempIndex + 1) + " " + queryText.substr(tempIndex+1);
+    queryText =
+        queryText.substr(0, tempIndex + 1) +
+        " " +
+        queryText.substr(tempIndex + 1);
 
     // get the posts
     try {
-        let results = await Post.find({
-            $text: {$search: queryText},
-            typeOfItem: typeOfItem,
-        }, {
-            score: { $meta: "textScore"},
-        })
-        .sort({ score: {$meta: "textScore"} });
+        let results = await Post.find(
+            {
+                $text: { $search: queryText },
+                typeOfItem: typeOfItem,
+            },
+            {
+                score: { $meta: "textScore" },
+            }
+        ).sort({ score: { $meta: "textScore" } });
         return res.status(200).json(results);
     } catch (e) {
-        return res.status(400).json({message: "Bad Request!"})
+        return res.status(400).json({ message: "Bad Request!" });
     }
-})
+});
 
 module.exports = router;

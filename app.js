@@ -8,6 +8,7 @@ const app = express();
 const user = require("./user/user");
 const post = require("./post/post");
 const avatar = require("./avatar");
+const feed = require("./feed");
 
 // middlewares
 app.use(bodyParser.json());
@@ -17,6 +18,7 @@ app.use(cors());
 app.use("/user", user);
 app.use("/post", post);
 app.use("/userAvatar", avatar);
+app.use("/feed", feed);
 
 // suppress the warnings
 mongoose.set("useNewUrlParser", true);

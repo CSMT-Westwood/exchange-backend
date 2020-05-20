@@ -13,7 +13,7 @@ const UserSchema = mongoose.Schema({
     },
     posts: [String],
     viewHistory: [String],
-    activity: [String], //Posts that the user responded to
+    authorOf: [String], //Posts that the user authored
     rp: { type: Number, default: 10 },
     avatar: { type: String, default: null }, //url of avatar
     avatar_ID: { type: String, default: null }, //the publid_id for avatar in the cloud. Used only for back-end implementation
