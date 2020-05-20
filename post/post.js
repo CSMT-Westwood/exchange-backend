@@ -38,6 +38,9 @@ router.delete("/", async (req, res) => {
 router.post("/new", loginRequired, async (req, res) => {
     // validate input
     req.body.course = req.body.course.split(" ").join("").toLowerCase();
+    console.log(req.body.course);
+    let courseNumberI = req.body.course.search(/[0-9]/g);
+    req.body.course = req.body.course.substr(0, courseNumberI) + " " + req.body.course.substr(courseNumberI);
     const error = validation.NewPostSchema.validate(req.body).error;
     if (error) {
         return res.status(400).json({message: error.details[0].message});
@@ -69,6 +72,29 @@ router.post("/new", loginRequired, async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(400).json({ message: err });
+    }
+})
+
+// Search for posts
+router.get("/search", async (req, res) => {
+    // format the course name in the search query
+    let typeOfItem = parseInt(req.query.typeOfItem);
+    let queryText = req.query.query;
+    let tempIndex = queryText.search(/[A-Za-z][0-9]/);
+    queryText = queryText.substr(0, tempIndex + 1) + " " + queryText.substr(tempIndex+1);
+
+    // get the posts
+    try {
+        let results = await Post.find({
+            $text: {$search: queryText},
+            typeOfItem: typeOfItem,
+        }, {
+            score: { $meta: "textScore"},
+        })
+        .sort({ score: {$meta: "textScore"} });
+        return res.status(200).json(results);
+    } catch (e) {
+        return res.status(400).json({message: "Bad Request!"})
     }
 })
 

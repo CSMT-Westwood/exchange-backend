@@ -11,7 +11,8 @@
     5. [Update User Profile](#user-update)
     6. [Update User Avatar](#user-avatar)
 2. [Offer / Request](#offreq)
-    1. [Make a post](#make-a-post)
+    1. [Make a Post](#make-a-post)
+    2. [Search for Posts](#post-search)
 
 ## User Related <a name="login"></a>
 
@@ -104,7 +105,7 @@
             {
                 "_id": "<post_id>",
                 "typeOfPost": "<0_or_1>",
-                "typeOfItem": "<0_or_1>",
+                "typeOfItem": "<0_or_2>",
                 "course": "<course_code>",      // when known
                 "itemName": "<item_name>",
                 "condition": "<0-3>",           // when known
@@ -235,7 +236,7 @@
 
 ## Offer / Request <a name="offreq"></a>
 
-### 1. Make a post <a name="make-a-post"></a>
+### 1. Make a Post <a name="make-a-post"></a>
 
 -   End point: `POST /post/new`
 -   Headers:
@@ -264,7 +265,7 @@
         {
             "_id": "<post_id>",
             "typeOfPost": "<0_or_1>",
-            "typeOfItem": "<0_or_1>",
+            "typeOfItem": "<0_or_2>",
             "course": "<course_code>",      // if applicable
             "itemName": "<item_name>",
             "condition": "<0-3>",           // if applicable
@@ -283,3 +284,34 @@
             "message": "<error_message>"
         }
         ```
+
+### 2. Search for Posts <a name="post-search"></a>
+
+- End point `GET /post/search/search?query=<search_query>&typeOfItem=<0or1or2>`
+- Headers
+    ```javascript
+    {
+        "Content-Type": "application/json",
+    }
+    ```
+- Body `None`
+- Response
+  - `200 OK`
+    ```javascript
+    [
+        {
+            "_id": "<post_id>",
+            "typeOfPost": "<0_or_1>",
+            "typeOfItem": "<0_or_2>",
+            "course": "<course_code>",      // if applicable
+            "itemName": "<item_name>",
+            "condition": "<0-3>",           // if applicable
+            "description": "<description>",
+            "link": "<link>",               // if applicable
+            "fulfilled": "<0-2>",           // if applicable
+            "publication_date": "<publication_date>",
+            "__v": "<ignore_this>",
+            "author": "<author_id>"
+        }, // more posts
+    ]
+    ```
