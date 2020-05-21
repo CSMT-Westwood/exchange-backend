@@ -339,7 +339,7 @@
     ```
 
 -   Request Body:
-    ```
+    ```javascript
     {
         //empty
     }
@@ -349,6 +349,7 @@
     -   `200 OK`
 
     ```javascript
+    {
     "preferencePosts":[
         {
             "fulfilled": 1,
@@ -376,6 +377,8 @@
         {<same as above>},
         {<same as above>}
     ]
+    }
+    
     ```
 
 ### 2. get MyPost <a name="getMyPosts"></a>
@@ -452,7 +455,8 @@
             "__v": 0
         }
     ]
-}
+    }
+
     ```
 ### 3. get posts that the user responded to <a name="getActivities"></a>
 
@@ -497,7 +501,8 @@
             <POSTOBJ>
         }
     ]
-}
+    }
+
     ```
 ### 4. get Followed posts <a name="getFollowedPosts"><a/>
 
@@ -543,4 +548,5 @@
         }
     ]
     }
+
     ```
