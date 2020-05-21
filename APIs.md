@@ -14,10 +14,10 @@
     1. [Make a Post](#make-a-post)
     2. [Search for Posts](#post-search)
 3. [Feed](#Feed)
-    1. getFeed
-    2. get Preference Posts
-    3. get My Posts
-    4. get Followed Posts
+    1. getFeed(#getFeed)
+    2. get Preference Posts(#getMyPosts)
+    3. get My Posts(#getActivities)
+    4. get Followed Posts(getFollowedPosts)
 
 ## User Related <a name="login"></a>
 
@@ -329,7 +329,7 @@
 -   End point `GET /feed/`
         Purpose: to get every post related to the user
         
-    Headers:
+-   Headers:
 
     ```javascript
     {
@@ -338,13 +338,15 @@
     }
     ```
 
-    Request Body:  
+-   Request Body:
+    ```
     {
         //empty
     }
+    ```
     
-    Response:
-    `200 OK`
+-   Response:
+    -   `200 OK`
 
     ```javascript
     "preferencePosts":[
@@ -376,12 +378,12 @@
     ]
     ```
 
-### 2. get MyPost <a name="getMyPost"></a>
-    End point `GET /feed/myPosts/`
-        Purpose: to get the posts created by the user
+### 2. get MyPost <a name="getMyPosts"></a>
+-   End point `GET /feed/myPosts/`
+    -   Purpose: to get the posts created by the user
         , organized in terms of levels of fulfillment
         
-    Headers:
+    - Headers:
 
     ```javascript
     {
@@ -390,12 +392,12 @@
     }
     ```
 
-    Request Body:  
+-   Request Body:  
     {
         //empty
     }
 
-    Response:
+-   Response:
     `200 OK`
 
     ```javascript
@@ -454,11 +456,11 @@
     ```
 ### 3. get posts that the user responded to <a name="getActivities"></a>
 
-    End point `GET /feed/activities/`
-        Purpose: to get the posts responded to by the user
+-   End point `GET /feed/activities/`
+    -   Purpose: to get the posts responded to by the user
         , organized in terms of levels of fulfillment
         
-    Headers:
+-   Headers:
 
     ```javascript
     {
@@ -467,12 +469,12 @@
     }
     ```
 
-    Request Body:  
+-   Request Body:  
     {
         //empty
     }
 
-    Response:
+-   Response:
     `200 OK`
 
     ```javascript
@@ -499,11 +501,11 @@
     ```
 ### 4. get Followed posts <a name="getFollowedPosts"><a/>
 
-    End point `GET /feed/followedPosts/`
-        Purpose: to get the posts followed by the user
+-   End point `GET /feed/followedPosts/`
+    -   Purpose: to get the posts followed by the user
         , organized in terms of levels of fulfillment
         
-    Headers:
+-   Headers:
 
     ```javascript
     {
@@ -512,12 +514,12 @@
     }
     ```
 
-    Request Body:  
+-   Request Body:  
     {
         //empty
     }
 
-    Response:
+-   Response:
     `200 OK`
 
     ```javascript
@@ -540,5 +542,5 @@
             <POSTOBJ>
         }
     ]
-}
+    }
     ```
