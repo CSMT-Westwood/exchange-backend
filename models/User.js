@@ -12,6 +12,8 @@ const UserSchema = mongoose.Schema({
         date_of_creation: { type: Date, default: Date.now },
     },
     posts: [String],
+    followedPosts: [String],
+    activities: [String], //posts that the user responded to
     rp: { type: Number, default: 10 },
     avatar: { type: String, default: null }, //url of avatar
     avatar_ID: { type: String, default: null }, //the publid_id for avatar in the cloud. Used only for back-end implementation

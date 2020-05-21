@@ -19,11 +19,11 @@ const PostSchema = mongoose.Schema({
     condition: Number,
     description: String,
     link: String,
-    fulfilled: Number,
+    fulfilled: { type: Number, default: 0 },
     author: String,
     publication_date: Date,
 });
 
-PostSchema.index({course: "text", itemName: "text"});
+PostSchema.index({ course: "text", itemName: "text" });
 
 module.exports = mongoose.model("Post", PostSchema);
