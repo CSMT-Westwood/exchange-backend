@@ -13,29 +13,35 @@ router.get(
     async (req, res) => {
         console.log(req.user);
         user = req.user;
+        let post;
         //get posts by searching preferences
         let preferencePosts = [];
         for (item of user.preferences) {
-            preferencePosts += await Post.find(
+            post = await Post.find(
                 { $text: { $search: item } },
                 { score: { $meta: "textScore" } }
             ).sort({ score: { $meta: "textScore" } });
+            preferencePosts.push(post);
         }
+        console.log(typeof preferencePosts);
         //get followedPosts
         let followedPosts = [];
         for (item of user.followedPosts) {
-            followedPosts += await Post.find({ _id: item });
+            post = await Post.find({ _id: item });
+            followedPosts.push(post);
         }
         //get the user's own posts
         let ownPosts = [];
         for (item of user.posts) {
-            ownPosts += await Post.find({ _id: item });
+            post = await Post.find({ _id: item });
+            ownPosts.push(post);
         }
 
         //get posts thet the user responded to
         let activities = [];
         for (irem of user.activities) {
-            activities += await Post.find({ _id: item });
+            post = await Post.find({ _id: item });
+            activities.push(post);
         }
 
         res.json({ preferencePosts, followedPosts, ownPosts, activities });
