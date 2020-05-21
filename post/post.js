@@ -38,7 +38,6 @@ router.delete("/", async (req, res) => {
 router.post("/new", loginRequired, async (req, res) => {
     // validate input
     req.body.course = req.body.course.split(" ").join("").toLowerCase();
-    console.log(req.body.course);
     let courseNumberI = req.body.course.search(/[0-9]/g);
     req.body.course = req.body.course.substr(0, courseNumberI) + " " + req.body.course.substr(courseNumberI);
     const error = validation.NewPostSchema.validate(req.body).error;
