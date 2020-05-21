@@ -13,6 +13,11 @@
 2. [Offer / Request](#offreq)
     1. [Make a Post](#make-a-post)
     2. [Search for Posts](#post-search)
+3. [Feed](#Feed)
+    1. getFeed
+    2. get Preference Posts
+    3. get My Posts
+    4. get Followed Posts
 
 ## User Related <a name="login"></a>
 
@@ -314,4 +319,226 @@
             "author": "<author_id>"
         }, // more posts
     ]
+    ```
+
+    
+## Feed <a name="Feed"></a>
+
+### 1. getFeed <a name="getFeed"></a>
+
+-   End point `GET /feed/`
+        Purpose: to get every post related to the user
+        
+    Headers:
+
+    ```javascript
+    {
+        "Content-Type": "multipart/form-data",
+        "token": "<login_token>"
+    }
+    ```
+
+    Request Body:  
+    {
+        //empty
+    }
+    
+    Response:
+    `200 OK`
+
+    ```javascript
+    "preferencePosts":[
+        {
+            "fulfilled": 1,
+            "_id": "5ec5d6d35cd7321734f06a44",
+            "typeOfPost": 0,
+            "typeOfItem": 0,
+            "itemName": "cs97",
+            "description": "This is the best class ever(fulfilled)",
+            "author": "5ec0e0d707a63f58a074bf3f",
+            "publication_date": "2020-05-21T01:18:11.235Z",
+            "__v": 0
+        },
+        {<same as above>},
+        {<same as above>}
+    ],
+    "followedPosts": [
+        {<same as above>},
+        {<same as above>}
+    ],
+    "ownPosts": [
+        {<same as above>},
+        {<same as above>}
+    ],
+    "activities":[
+        {<same as above>},
+        {<same as above>}
+    ]
+    ```
+
+### 2. get MyPost <a name="getMyPost"></a>
+    End point `GET /feed/myPosts/`
+        Purpose: to get the posts created by the user
+        , organized in terms of levels of fulfillment
+        
+    Headers:
+
+    ```javascript
+    {
+        "Content-Type": "multipart/form-data",
+        "token": "<login_token>"
+    }
+    ```
+
+    Request Body:  
+    {
+        //empty
+    }
+
+    Response:
+    `200 OK`
+
+    ```javascript
+    {
+    "unfulfilled": [
+        {
+            "fulfilled": 0,
+            "_id": "5ec5d6875cd7321734f06a42",
+            "typeOfPost": 0,
+            "typeOfItem": 0,
+            "itemName": "cs100",
+            "description": "yesyesyes",
+            "author": "5ec0e0d707a63f58a074bf3f",
+            "publication_date": "2020-05-21T01:16:55.879Z",
+            "__v": 0
+        },
+        {
+            "fulfilled": 0,
+            "_id": "5ec5d6bc5cd7321734f06a43",
+            "typeOfPost": 0,
+            "typeOfItem": 0,
+            "itemName": "cs97",
+            "description": "This is the best class ever",
+            "author": "5ec0e0d707a63f58a074bf3f",
+            "publication_date": "2020-05-21T01:17:48.442Z",
+            "__v": 0
+        }
+    ],
+    "pending": [
+        {
+            "fulfilled": 1,
+            "_id": "5ec5d6d35cd7321734f06a44",
+            "typeOfPost": 0,
+            "typeOfItem": 0,
+            "itemName": "cs97",
+            "description": "This is the best class ever(fulfilled)",
+            "author": "5ec0e0d707a63f58a074bf3f",
+            "publication_date": "2020-05-21T01:18:11.235Z",
+            "__v": 0
+        }
+    ],
+    "fulfilled": [
+        {
+            "fulfilled": 2,
+            "_id": "5ec5d6e35cd7321734f06a45",
+            "typeOfPost": 0,
+            "typeOfItem": 0,
+            "itemName": "cs97",
+            "description": "This is hard)",
+            "author": "5ec0e0d707a63f58a074bf3f",
+            "publication_date": "2020-05-21T01:18:27.270Z",
+            "__v": 0
+        }
+    ]
+}
+    ```
+### 3. get posts that the user responded to <a name="getActivities"></a>
+
+    End point `GET /feed/activities/`
+        Purpose: to get the posts responded to by the user
+        , organized in terms of levels of fulfillment
+        
+    Headers:
+
+    ```javascript
+    {
+        "Content-Type": "multipart/form-data",
+        "token": "<login_token>"
+    }
+    ```
+
+    Request Body:  
+    {
+        //empty
+    }
+
+    Response:
+    `200 OK`
+
+    ```javascript
+    {
+    "unfulfilled": [
+        {
+            <POSTOBJ>
+        },
+        {
+            <POSTOBJ>
+        }
+    ],
+    "pending": [
+        {
+            <POSTOBJ>
+        }
+    ],
+    "fulfilled": [
+        {
+            <POSTOBJ>
+        }
+    ]
+}
+    ```
+### 4. get Followed posts <a name="getFollowedPosts"><a/>
+
+    End point `GET /feed/followedPosts/`
+        Purpose: to get the posts followed by the user
+        , organized in terms of levels of fulfillment
+        
+    Headers:
+
+    ```javascript
+    {
+        "Content-Type": "multipart/form-data",
+        "token": "<login_token>"
+    }
+    ```
+
+    Request Body:  
+    {
+        //empty
+    }
+
+    Response:
+    `200 OK`
+
+    ```javascript
+    {
+    "unfulfilled": [
+        {
+            <POSTOBJ>
+        },
+        {
+            <POSTOBJ>
+        }
+    ],
+    "pending": [
+        {
+            <POSTOBJ>
+        }
+    ],
+    "fulfilled": [
+        {
+            <POSTOBJ>
+        }
+    ]
+}
     ```
