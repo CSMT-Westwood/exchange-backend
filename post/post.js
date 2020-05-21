@@ -36,13 +36,15 @@ router.delete("/", async (req, res) => {
 // Creating a new post
 router.post("/new", loginRequired, async (req, res) => {
     // validate input
-    req.body.course = req.body.course.split(" ").join("").toLowerCase();
-    console.log(req.body.course);
-    let courseNumberI = req.body.course.search(/[0-9]/g);
-    req.body.course =
-        req.body.course.substr(0, courseNumberI) +
-        " " +
-        req.body.course.substr(courseNumberI);
+    if (req.body.course !== undefined) {
+        req.body.course = req.body.course.split(" ").join("").toLowerCase();
+        console.log(req.body.course);
+        let courseNumberI = req.body.course.search(/[0-9]/g);
+        req.body.course =
+            req.body.course.substr(0, courseNumberI) +
+            " " +
+            req.body.course.substr(courseNumberI);
+    }
     const error = validation.NewPostSchema.validate(req.body).error;
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
