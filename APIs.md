@@ -14,10 +14,10 @@
     1. [Make a Post](#make-a-post)
     2. [Search for Posts](#post-search)
 3. [Feed](#Feed)
-    1. getFeed(#getFeed)
-    2. get Preference Posts(#getMyPosts)
-    3. get My Posts(#getActivities)
-    4. get Followed Posts(getFollowedPosts)
+    1. [getFeed](#getFeed)
+    2. [get Preference Posts](#getMyPosts)
+    3. [get My Posts](#getActivities)
+    4. [get Followed Posts](getFollowedPosts)
 
 ## User Related <a name="login"></a>
 
@@ -321,14 +321,14 @@
     ]
     ```
 
-    
+
 ## Feed <a name="Feed"></a>
 
 ### 1. getFeed <a name="getFeed"></a>
 
 -   End point `GET /feed/`
         Purpose: to get every post related to the user
-        
+
 -   Headers:
 
     ```javascript
@@ -344,7 +344,7 @@
         //empty
     }
     ```
-    
+
 -   Response:
     -   `200 OK`
 
@@ -353,7 +353,6 @@
     "preferencePosts":[
         {
             "fulfilled": 1,
-            "_id": "5ec5d6d35cd7321734f06a44",
             "typeOfPost": 0,
             "typeOfItem": 0,
             "itemName": "cs97",
@@ -378,19 +377,18 @@
         {<same as above>}
     ]
     }
-    
+
     ```
 
 ### 2. get MyPost <a name="getMyPosts"></a>
 -   End point `GET /feed/myPosts/`
     -   Purpose: to get the posts created by the user
         , organized in terms of levels of fulfillment
-        
+
     - Headers:
 
     ```javascript
     {
-        "Content-Type": "multipart/form-data",
         "token": "<login_token>"
     }
     ```
@@ -463,12 +461,11 @@
 -   End point `GET /feed/activities/`
     -   Purpose: to get the posts responded to by the user
         , organized in terms of levels of fulfillment
-        
+
 -   Headers:
 
     ```javascript
     {
-        "Content-Type": "multipart/form-data",
         "token": "<login_token>"
     }
     ```
@@ -509,12 +506,11 @@
 -   End point `GET /feed/followedPosts/`
     -   Purpose: to get the posts followed by the user
         , organized in terms of levels of fulfillment
-        
+
 -   Headers:
 
     ```javascript
     {
-        "Content-Type": "multipart/form-data",
         "token": "<login_token>"
     }
     ```

@@ -104,8 +104,21 @@ router.get("/search", async (req, res) => {
                 score: { $meta: "textScore" },
             }
         ).sort({ score: { $meta: "textScore" } });
+
+        // find the authors
+        let findAuthors = [];
+        for (each of results) {
+            findAuthors.push(User.findOne({_id: each.author}));
+        }
+
+        let authors = await Promise.all(findAuthors);
+        for (let i = 0; i < authors.length; i++) {
+            results[i].author = authors[i].username;
+        }
+
         return res.status(200).json(results);
     } catch (e) {
+        console.log(e);
         return res.status(400).json({ message: "Bad Request!" });
     }
 });
