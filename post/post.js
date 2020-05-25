@@ -52,11 +52,6 @@ router.delete("/", async (req, res) => {
 // Creating a new post
 router.post("/new", loginRequired, async (req, res) => {
     // validate input
-<<<<<<< HEAD
-    req.body.course = req.body.course.split(" ").join("").toLowerCase();
-    let courseNumberI = req.body.course.search(/[0-9]/g);
-    req.body.course = req.body.course.substr(0, courseNumberI) + " " + req.body.course.substr(courseNumberI);
-=======
     if (req.body.course !== undefined) {
         req.body.course = req.body.course.split(" ").join("").toLowerCase();
         console.log(req.body.course);
@@ -66,7 +61,6 @@ router.post("/new", loginRequired, async (req, res) => {
             " " +
             req.body.course.substr(courseNumberI);
     }
->>>>>>> master
     const error = validation.NewPostSchema.validate(req.body).error;
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
@@ -161,7 +155,7 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
     currUser.followedPosts.push(currPost._id);
 
     if (currPost.typeOfPost === postTypeDict.OFFER && 
-        currPost.typeOfItem === postTypeDict.NOTES) {
+        currPost.typeOfItem === postTypeDict.NOTES) {           // if note&offer, change rp, return
         currUser.rp -= 5;
         postAuthor.rp += 5;
         await Promise.all([
