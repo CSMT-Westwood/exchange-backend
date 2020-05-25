@@ -155,7 +155,7 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
     currUser.followedPosts.push(currPost._id);
 
     if (currPost.typeOfPost === postTypeDict.OFFER && 
-        currPost.typeOfItem === postTypeDict.NOTES) {
+        currPost.typeOfItem === postTypeDict.NOTES) {           // if note&offer, change rp, return
         currUser.rp -= 5;
         postAuthor.rp += 5;
         await Promise.all([
