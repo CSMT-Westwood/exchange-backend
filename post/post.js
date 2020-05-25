@@ -38,6 +38,7 @@ router.delete("/", async (req, res) => {
         for (each of allPosts) {
             User.findOne({ _id: each.author }).then((user) => {
                 user.posts = [];
+                user.followedPosts = [];
                 user.save();
             });
         }
@@ -119,13 +120,15 @@ router.get("/search", async (req, res) => {
             {
                 $text: { $search: queryText },
                 typeOfItem: typeOfItem,
-                fulfilled: { $lte: 1}
             },
             {
                 score: { $meta: "textScore" },
             }
         ).sort({ score: { $meta: "textScore" } });
 
+        // only show the ones that are in the unfulfilled / pending stage
+        results = results.filter(val => val.fulfilled <= 1);
+        
         // pop in the author info
         results = results.map((val) => {
             return postserializer.serialize(val);
