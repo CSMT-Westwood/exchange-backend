@@ -8,7 +8,7 @@ const NewPostSchema = Joi.object({
     condition: Joi.number().integer().min(0).max(3),
     description: Joi.string().max(140).required(),
     link: Joi.string(),
-    fulfilled: Joi.number().integer().min(0).max(2),
+    fulfilled: Joi.number().integer().min(0).max(3),
 });
 
 module.exports.NewPostSchema = NewPostSchema;

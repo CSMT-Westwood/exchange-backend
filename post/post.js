@@ -17,7 +17,8 @@ const postTypeDict = {
     SKILLS: 2,
     UNFULFILLED: 0,
     PENDING: 1,
-    FULFILLED: 2
+    PROCESSING: 2,
+    FULFILLED: 3
 };
 
 // FOR TESTING PURPOSES // FOR TESTING PURPOSES // FOR TESTING PURPOSES
@@ -118,6 +119,7 @@ router.get("/search", async (req, res) => {
             {
                 $text: { $search: queryText },
                 typeOfItem: typeOfItem,
+                fulfilled: { $lte: 1}
             },
             {
                 score: { $meta: "textScore" },
@@ -144,9 +146,23 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
     const currUser = req.user;
 
     currPost.fulfilled = postTypeDict.PENDING;
+
+    // if the user's already following the post, don't do anything
     if (currPost.clients.includes(currUser._id) || 
         currUser.followedPosts.includes(currPost._id)) {
-        return res.status(400).json({message: "User already followed the post."});
+        if (currPost.typeOfPost === postTypeDict.OFFER && 
+            currPost.typeOfItem === postTypeDict.NOTES) {
+            return res.status(200).json({message: "Show Link"});
+        }
+        return res.status(200).json({message: "You've already followed the post."});
+    }
+
+    if (currUser._id === postAuthor._id) {
+        if (currPost.typeOfPost === postTypeDict.OFFER && 
+            currPost.typeOfItem === postTypeDict.NOTES) {
+            return res.status(200).json({message: "Show Link"});
+        }
+        return res.status(200).json({message: "You've already followed the post."});
     }
 
     // add the user to the list of followers of the post.
@@ -165,10 +181,13 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
         ]);
         return res.status(200).json({message: "Show Link"});
     } else {
-        return res.status(501).json({message: "not implemented"});
+        await Promise.all([
+            currUser.save(),
+            postAuthor.save(),
+            currPost.save()
+        ]);
+        return res.status(200).json({message: "Your response has been recorded. Waiting for the post author's response"});
     }
-
-    return res.status(200).json(currPost);
 })
 
 module.exports = router;
