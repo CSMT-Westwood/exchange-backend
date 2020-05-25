@@ -147,7 +147,10 @@
         {
             "preferences": "<array_of_preferences>",
             "posts": "<array_of_posts_by_user>",
+            "followedPosts":"<array_of_followed_posts>",
             "rp": "<rp>",
+            "avatar":"<link of avatar>", //value is null if no avater
+            "avatar":"<avatar_ID>",
             "username": "<username>",
             "email": "<email>"
         }
