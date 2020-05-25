@@ -279,7 +279,16 @@
             "fulfilled": "<0-2>",           // if applicable
             "publication_date": "<publication_date>",
             "__v": "<ignore_this>",
-            "author": "<author_id>"
+            "author": {
+                "username": "<usename>",
+                "rp": "<rp>",
+                "email": "<email>"
+            },
+            "clients": [
+                {
+                    // similar to the author obj ^
+                },  // and more
+            ]
         }
         ```
     -   `400 Bad Request` Cause: invalid user input
@@ -316,8 +325,17 @@
             "fulfilled": "<0-2>",           // if applicable
             "publication_date": "<publication_date>",
             "__v": "<ignore_this>",
-            "author": "<author_id>"
-        }, // more posts
+            "author": {
+                "username": "<usename>",
+                "rp": "<rp>",
+                "email": "<email>"
+            },
+            "clients": [
+                {
+                    // similar to the author obj ^
+                },  // and more
+            ]
+        }
     ]
     ```
 
@@ -516,33 +534,35 @@
     ```
 
 -   Request Body:  
+    ```javascript
     {
         //empty
     }
+    ```
 
 -   Response:
     `200 OK`
 
     ```javascript
     {
-    "unfulfilled": [
-        {
-            <POSTOBJ>
-        },
-        {
-            <POSTOBJ>
-        }
-    ],
-    "pending": [
-        {
-            <POSTOBJ>
-        }
-    ],
-    "fulfilled": [
-        {
-            <POSTOBJ>
-        }
-    ]
+        "unfulfilled": [
+            {
+                <POSTOBJ>
+            },
+            {
+                <POSTOBJ>
+            }
+        ],
+        "pending": [
+            {
+                <POSTOBJ>
+            }
+        ],
+        "fulfilled": [
+            {
+                <POSTOBJ>
+            }
+        ]
     }
 
     ```

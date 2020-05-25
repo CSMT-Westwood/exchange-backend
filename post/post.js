@@ -6,13 +6,29 @@ const router = express.Router();
 const Post = require("../models/Post"); //get model
 const User = require("../models/User");
 const loginRequired = require("../verifyToken"); //verifyToken.js
+const middlewares = require("../middlewares");
 const validation = require("./input_validations");
+const postserializer = require("./postserializer");
+const postTypeDict = {
+    OFFER: 0,
+    REQUEST: 1,
+    TEXTBOOKS: 0,
+    NOTES: 1,
+    SKILLS: 2,
+    UNFULFILLED: 0,
+    PENDING: 1,
+    FULFILLED: 2
+};
 
 // FOR TESTING PURPOSES // FOR TESTING PURPOSES // FOR TESTING PURPOSES
 // Get all posts
 router.get("/", async (req, res) => {
     const allPosts = await Post.find();
-    res.json(allPosts);
+    const tobeserialized = allPosts.map((val) => {
+        return postserializer.serialize(val);
+    });
+    const serialized = await Promise.all(tobeserialized);
+    res.json(serialized);
 });
 // Delete all posts
 router.delete("/", async (req, res) => {
@@ -73,7 +89,10 @@ router.post("/new", loginRequired, async (req, res) => {
         ]);
         correspondingUser.posts.push(postCreated._id);
         await correspondingUser.save();
-        res.status(200).json(newPost);
+
+        // pop in the author & client info instead of boring IDs
+        const result = await postserializer.serialize(newPost);
+        res.status(200).json(result);
     } catch (err) {
         console.log(err);
         res.status(400).json({ message: err });
@@ -105,16 +124,11 @@ router.get("/search", async (req, res) => {
             }
         ).sort({ score: { $meta: "textScore" } });
 
-        // find the authors
-        let findAuthors = [];
-        for (each of results) {
-            findAuthors.push(User.findOne({_id: each.author}));
-        }
-
-        let authors = await Promise.all(findAuthors);
-        for (let i = 0; i < authors.length; i++) {
-            results[i].author = authors[i].username;
-        }
+        // pop in the author info
+        results = results.map((val) => {
+            return postserializer.serialize(val);
+        });
+        results = await Promise.all(results);
 
         return res.status(200).json(results);
     } catch (e) {
@@ -122,5 +136,39 @@ router.get("/search", async (req, res) => {
         return res.status(400).json({ message: "Bad Request!" });
     }
 });
+
+// user accepts a post
+router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, res) => {
+    const currPost = await Post.findOne({_id: req.body._id});
+    const postAuthor = await User.findOne({_id: currPost.author});
+    const currUser = req.user;
+
+    currPost.fulfilled = postTypeDict.PENDING;
+    if (currPost.clients.includes(currUser._id) || 
+        currUser.followedPosts.includes(currPost._id)) {
+        return res.status(400).json({message: "User already followed the post."});
+    }
+
+    // add the user to the list of followers of the post.
+    currPost.clients.push(currUser._id);
+    // add the post to the list of followed posts of the user.
+    currUser.followedPosts.push(currPost._id);
+
+    if (currPost.typeOfPost === postTypeDict.OFFER && 
+        currPost.typeOfItem === postTypeDict.NOTES) {
+        currUser.rp -= 5;
+        postAuthor.rp += 5;
+        await Promise.all([
+            currUser.save(),
+            postAuthor.save(),
+            currPost.save()
+        ]);
+        return res.status(200).json({message: "Show Link"});
+    } else {
+        return res.status(501).json({message: "not implemented"});
+    }
+
+    return res.status(200).json(currPost);
+})
 
 module.exports = router;
