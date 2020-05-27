@@ -22,6 +22,7 @@ const PostSchema = mongoose.Schema({
     fulfilled: { type: Number, default: 0 },
     author: String,
     publication_date: Date,
+    clients: [String],
 });
 
 PostSchema.index({ course: "text", itemName: "text" });
