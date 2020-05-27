@@ -15,9 +15,8 @@
     2. [Search for Posts](#post-search)
 3. [Feed](#Feed)
     1. [getFeed](#getFeed)
-    2. [get Preference Posts](#getMyPosts)
-    3. [get My Posts](#getActivities)
-    4. [get Followed Posts](getFollowedPosts)
+    2. [get My Posts](#getMyPosts)
+    3. [get Followed Posts](#getFollowedPosts)
 
 ## User Related <a name="login"></a>
 
