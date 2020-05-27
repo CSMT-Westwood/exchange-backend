@@ -4,6 +4,17 @@ const Post = require("./models/Post"); //get model
 const User = require("./models/User");
 const loginRequired = require("./verifyToken"); //verifyToken.js
 const middlewares = require("./middlewares");
+const serializer = require("./post/postserializer");
+
+
+async function serializePosts(posts) {
+    //populate post Objects with clients and author info
+    let res = (posts.map(post => {
+        return serializer.serialize(post);
+    }));
+    res = await Promise.all(res);
+    return res;
+}
 
 /*****GET FEED******/
 //login required
@@ -48,6 +59,13 @@ router.get(
         }
         activities = (await Promise.all(posts)).filter((v) => v !== null);
 
+        //populate post Objects with clients and author info
+        preferencePosts = await serializePosts(preferencePosts);
+        followedPosts = await serializePosts(followedPosts);
+        ownPosts = await serializePosts(ownPosts);
+        activities = await serializePosts(activities);
+
+
         res.json({ preferencePosts, followedPosts, ownPosts, activities });
     }
 );
@@ -85,6 +103,9 @@ router.get(
         }
         ownPosts.fulfilled = (await Promise.all(posts)).filter((v) => v !== null);
 
+        ownPosts.unfulfilled = await serializePosts(ownPosts.unfulfilled);
+        ownPosts.pending = await serializePosts(ownPosts.pending);
+        ownPosts.fulfilled = await serializePosts(ownPosts.fulfilled);
         return res.json(ownPosts);
     }
 );
@@ -119,6 +140,11 @@ router.get(
             post.push(Post.findOne({ _id: item, fulfilled: 2 }));
         }
         activities.fulfilled = (await Promise.all(posts)).filter((v) => v !== null);
+
+        activities.unfulfilled = await serializePosts(activities.unfulfilled);
+        activities.pending = await serializePosts(activities.pending);
+        activities.fulfilled = await serializePosts(activities.fulfilled);
+
         return res.json(activities);
     }
 );
@@ -153,6 +179,9 @@ router.get(
         }
         followedPosts.fulfilled = (await Promise.all(posts)).filter((v) => v !== null);
 
+        followedPosts.unfulfilled = await serializePosts(followedPosts.unfulfilled);
+        followedPosts.pending = await serializePosts(followedPosts.pending);
+        followedPosts.fulfilled = await serializePosts(followedPosts.fulfilled);
         return res.json(followedPosts);
     }
 );
