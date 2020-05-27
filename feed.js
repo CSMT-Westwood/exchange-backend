@@ -52,21 +52,12 @@ router.get(
 
         posts = [];
 
-        //get posts that the user responded to
-        let activities = [];
-        for (item of user.activities) {
-            posts.push(Post.findOne({ _id: item }));
-        }
-        activities = (await Promise.all(posts)).filter((v) => v !== null);
-
         //populate post Objects with clients and author info
         preferencePosts = await serializePosts(preferencePosts);
         followedPosts = await serializePosts(followedPosts);
         ownPosts = await serializePosts(ownPosts);
-        activities = await serializePosts(activities);
 
-
-        res.json({ preferencePosts, followedPosts, ownPosts, activities });
+        res.json({ preferencePosts, followedPosts, ownPosts });
     }
 );
 
@@ -111,7 +102,7 @@ router.get(
 );
 
 /****GET POSTS that user responded to****/
-
+/*
 router.get(
     "/activities/",
     [loginRequired, middlewares.getUserObject],
@@ -148,7 +139,7 @@ router.get(
         return res.json(activities);
     }
 );
-
+*/
 /****GET Followed POSTS****/
 
 router.get(

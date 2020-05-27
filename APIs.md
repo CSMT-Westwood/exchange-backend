@@ -374,11 +374,25 @@
     "preferencePosts":[
         {
             "fulfilled": 1,
+            "clients":[
+                {
+                "_id": "5ec0e0d707a63f58a074bf3f",
+                "rp": 10,
+                "username": "frank1",
+                "email": "zhou123456@ucla.edu"
+                }
+            ]
+            "_id":"5ec596f9503339e002e2e010",
             "typeOfPost": 0,
             "typeOfItem": 0,
             "itemName": "cs97",
             "description": "This is the best class ever(fulfilled)",
-            "author": "5ec0e0d707a63f58a074bf3f",
+            "author":  {
+                "_id": "5eb882153e72a51110bec821",
+                "username": "TonyXia",
+                "email": "Tony12345@g.ucla.edu",
+                "rp": 1505
+            },
             "publication_date": "2020-05-21T01:18:11.235Z",
             "__v": 0
         },
@@ -390,10 +404,6 @@
         {<same as above>}
     ],
     "ownPosts": [
-        {<same as above>},
-        {<same as above>}
-    ],
-    "activities":[
         {<same as above>},
         {<same as above>}
     ]
@@ -427,23 +437,35 @@
     "unfulfilled": [
         {
             "fulfilled": 0,
+            "clients":[<author>,<author>],
             "_id": "5ec5d6875cd7321734f06a42",
             "typeOfPost": 0,
             "typeOfItem": 0,
             "itemName": "cs100",
             "description": "yesyesyes",
-            "author": "5ec0e0d707a63f58a074bf3f",
+            "author": {
+                "_id": "5ec0e0d707a63f58a074bf3f",
+                "rp": 10,
+                "username": "frank1",
+                "email": "zhou123456@ucla.edu"
+            },
             "publication_date": "2020-05-21T01:16:55.879Z",
             "__v": 0
         },
         {
             "fulfilled": 0,
+            "clients":[],
             "_id": "5ec5d6bc5cd7321734f06a43",
             "typeOfPost": 0,
             "typeOfItem": 0,
             "itemName": "cs97",
             "description": "This is the best class ever",
-            "author": "5ec0e0d707a63f58a074bf3f",
+            "author":  {
+                "_id": "5ec0e0d707a63f58a074bf3f",
+                "rp": 10,
+                "username": "frank1",
+                "email": "zhou123456@ucla.edu"
+            },
             "publication_date": "2020-05-21T01:17:48.442Z",
             "__v": 0
         }
@@ -451,12 +473,13 @@
     "pending": [
         {
             "fulfilled": 1,
+            "clients":[],
             "_id": "5ec5d6d35cd7321734f06a44",
             "typeOfPost": 0,
             "typeOfItem": 0,
             "itemName": "cs97",
             "description": "This is the best class ever(fulfilled)",
-            "author": "5ec0e0d707a63f58a074bf3f",
+            "author": <author>,
             "publication_date": "2020-05-21T01:18:11.235Z",
             "__v": 0
         }
@@ -464,12 +487,18 @@
     "fulfilled": [
         {
             "fulfilled": 2,
+            "clients":[],
             "_id": "5ec5d6e35cd7321734f06a45",
             "typeOfPost": 0,
             "typeOfItem": 0,
             "itemName": "cs97",
             "description": "This is hard)",
-            "author": "5ec0e0d707a63f58a074bf3f",
+            "author": {
+                "_id": "5ec0e0d707a63f58a074bf3f",
+                "rp": 10,
+                "username": "frank1",
+                "email": "zhou123456@ucla.edu"
+            },
             "publication_date": "2020-05-21T01:18:27.270Z",
             "__v": 0
         }
@@ -477,52 +506,8 @@
     }
 
     ```
-### 3. get posts that the user responded to <a name="getActivities"></a>
 
--   End point `GET /feed/activities/`
-    -   Purpose: to get the posts responded to by the user
-        , organized in terms of levels of fulfillment
-
--   Headers:
-
-    ```javascript
-    {
-        "token": "<login_token>"
-    }
-    ```
-
--   Request Body:  
-    {
-        //empty
-    }
-
--   Response:
-    `200 OK`
-
-    ```javascript
-    {
-    "unfulfilled": [
-        {
-            <POSTOBJ>
-        },
-        {
-            <POSTOBJ>
-        }
-    ],
-    "pending": [
-        {
-            <POSTOBJ>
-        }
-    ],
-    "fulfilled": [
-        {
-            <POSTOBJ>
-        }
-    ]
-    }
-
-    ```
-### 4. get Followed posts <a name="getFollowedPosts"><a/>
+### 3. get Followed posts <a name="getFollowedPosts"><a/>
 
 -   End point `GET /feed/followedPosts/`
     -   Purpose: to get the posts followed by the user
