@@ -17,8 +17,8 @@ const NotificationSchema = mongoose.Schema({
     recipient: String,
     type: Number,
     message: String,
-    relatedPost: String,
-    relatedUser: String
+    relatedPost: { type: String, default: null },
+    relatedUser: { type: String, default: null },
 });
 
 module.exports = mongoose.model("Notification", NotificationSchema);
