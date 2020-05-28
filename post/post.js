@@ -217,4 +217,65 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
     }
 })
 
+//host accepting a client API
+//req.postID : the id of the post
+//req.clientID: the id of the client
+router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (req, res) => {
+    const User_host = req.user;
+    const User_client = await User.findOne({ _id: req.body.clientID });
+    const currPost = await Post.findOne({ _id: req.body.postID });
+
+    currPost.fulfilled = postTypeDict.FULFILLED;
+
+    //add reject notification to all unselected clients
+    newNotices_rejects = [];
+    for (client of currPost.clients) {
+        if (client._id !== User_client._id) {
+            newNotices_rejects.push(new Notification({
+                recipient: client._id,
+                type: 5,
+                message: "The host has accepted someone else.",
+                relatedPost: currPost._id,
+                relatedUser: currPost.author
+            }))
+        }
+    }
+    //pop all rejected clients in the post
+    currPost.clients = [];
+    currPost.clients.push(req.body.clientID);
+
+    //add notification (type 4) for the client chosen
+    const newNotice_client = new Notification({
+        recipient: User_client._id, //the client id
+        type: 4,
+        message: "You have been successfully accepted by the host. The post is now fulfilled.",
+        relatedPost: currPost._id, //the post id
+        relatedUser: currPost.author, //the id of the author of the post
+    })
+
+    //add notification (type 3) for the host
+    const newNotice_host = new Notification({
+        recipient: currPost.author, // id of host
+        type: 3,
+        message: "you have successfully accepted a client. Your post is now fulfilled.",
+        relatedPost: currPost._id,  //id of the post
+        relatedUser: User_client._id, //id of client
+    })
+    //update rp: both users rp+=10
+    User_client.rp += 10;
+    User_host.rp += 10;
+
+    //save documents
+    promises = [
+        User_client.save(),
+        User_host.save(),
+        newNotice_host.save(),
+        newNotice_client.save(),
+        newNotices_rejects.map(item => item.save())]
+    promises = promises.flat();
+
+    await Promise.all(promises);
+    return res.status(200).json({ message: "You have successfully accepted a client" });
+})
+
 module.exports = router;
