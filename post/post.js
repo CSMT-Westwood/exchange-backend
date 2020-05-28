@@ -9,6 +9,7 @@ const loginRequired = require("../verifyToken"); //verifyToken.js
 const middlewares = require("../middlewares");
 const validation = require("./input_validations");
 const postserializer = require("./postserializer");
+const Notification = require("../models/Notification");
 const postTypeDict = {
     OFFER: 0,
     REQUEST: 1,
@@ -128,7 +129,7 @@ router.get("/search", async (req, res) => {
 
         // only show the ones that are in the unfulfilled / pending stage
         results = results.filter(val => val.fulfilled <= 1);
-        
+
         // pop in the author info
         results = results.map((val) => {
             return postserializer.serialize(val);
@@ -144,28 +145,28 @@ router.get("/search", async (req, res) => {
 
 // user accepts a post
 router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, res) => {
-    const currPost = await Post.findOne({_id: req.body._id});
-    const postAuthor = await User.findOne({_id: currPost.author});
+    const currPost = await Post.findOne({ _id: req.body._id });
+    const postAuthor = await User.findOne({ _id: currPost.author });
     const currUser = req.user;
 
     currPost.fulfilled = postTypeDict.PENDING;
 
     // if the user's already following the post, don't do anything
-    if (currPost.clients.includes(currUser._id) || 
+    if (currPost.clients.includes(currUser._id) ||
         currUser.followedPosts.includes(currPost._id)) {
-        if (currPost.typeOfPost === postTypeDict.OFFER && 
+        if (currPost.typeOfPost === postTypeDict.OFFER &&
             currPost.typeOfItem === postTypeDict.NOTES) {
-            return res.status(200).json({message: "Show Link"});
+            return res.status(200).json({ message: "Show Link" });
         }
-        return res.status(200).json({message: "You've already followed the post."});
+        return res.status(200).json({ message: "You've already followed the post." });
     }
 
     if (currUser._id === postAuthor._id) {
-        if (currPost.typeOfPost === postTypeDict.OFFER && 
+        if (currPost.typeOfPost === postTypeDict.OFFER &&
             currPost.typeOfItem === postTypeDict.NOTES) {
-            return res.status(200).json({message: "Show Link"});
+            return res.status(200).json({ message: "Show Link" });
         }
-        return res.status(200).json({message: "You've already followed the post."});
+        return res.status(200).json({ message: "You've already followed the post." });
     }
 
     // add the user to the list of followers of the post.
@@ -173,23 +174,46 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
     // add the post to the list of followed posts of the user.
     currUser.followedPosts.push(currPost._id);
 
-    if (currPost.typeOfPost === postTypeDict.OFFER && 
+    //add notification (type 2) for the client who accepted the post
+    const newNotice_client = new Notification({
+        recipient: currUser._id, //the client id
+        type: 2,
+        message: "You have followed the post. Please wait for response from the host.",
+        relatedPost: currPost._id, //the post id
+        relatedUser: currPost.author, //the id of the author of the post
+    })
+
+    //add notification (type 1) for the host
+    const newNotice_host = new Notification({
+        recipient: currPost.author, // id of host
+        type: 1,
+        message: "A user has responded to your post.",
+        relatedPost: currPost._id,  //id of the post
+        relatedUser: currUser._id, //id of client
+    })
+
+
+    if (currPost.typeOfPost === postTypeDict.OFFER &&
         currPost.typeOfItem === postTypeDict.NOTES) {           // if note&offer, change rp, return
         currUser.rp -= 5;
         postAuthor.rp += 5;
         await Promise.all([
             currUser.save(),
             postAuthor.save(),
-            currPost.save()
+            currPost.save(),
+            newNotice_client.save(),
+            newNotice_host.save()
         ]);
-        return res.status(200).json({message: "Show Link"});
+        return res.status(200).json({ message: "Show Link" });
     } else {
         await Promise.all([
             currUser.save(),
             postAuthor.save(),
-            currPost.save()
+            currPost.save(),
+            newNotice_client.save(),
+            newNotice_host.save()
         ]);
-        return res.status(200).json({message: "Your response has been recorded. Waiting for the post author's response"});
+        return res.status(200).json({ message: "Your response has been recorded. Waiting for the post author's response" });
     }
 })
 
