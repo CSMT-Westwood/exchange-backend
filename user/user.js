@@ -9,6 +9,8 @@ const Post = require("../models/Post");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken"); //jsonwebtoken
 const loginRequired = require("../verifyToken"); //verifyToken.js
+const Notification = require("../models/Notification"); //Notificaion
+const middlewares = require("../middlewares");
 
 //For debugging purpose, return all users in database
 router.get("/", async (req, res) => {
@@ -49,6 +51,15 @@ router.post("/signup", async (req, res) => {
     //Creat a new user
     try {
         const addedUser = await newUser.save();
+
+        //push notification
+        const newNotice = new Notification({
+            recipient: addedUser._id,
+            type: 0,
+            message: "Welcome to eXchange!"
+        });
+        await newNotice.save();
+
         res.status(200).json({
             username: addedUser.username,
             email: addedUser.email,
@@ -190,4 +201,31 @@ router.patch("/update", loginRequired, async (req, res) => {
     }
 });
 
+/*GET USER NOTIFICATION API*/
+//get user's notification
+//login required
+
+router.get("/notifications", [loginRequired, middlewares.getUserObject], async (req, res) => {
+    const userid = req.user._id;
+    try {
+        const notifications = await Notification.find({ recipient: userid });
+        return res.status(200).json(notifications);
+    } catch (e) {
+        console.log(e);
+        return res.json({ message: "error at retriving notifications" });
+    }
+})
+
+/*READ NOTIFICATION */
+//Notification.unread: true--->false
+//req.body.notificationID
+router.post("/readNotification", [loginRequired, middlewares.getUserObject], async (req, res) => {
+    const currUser = req.user;
+    const notification = await Notification.findOne({ _id: req.body.notificationID });
+    if (notification === null) return res.status(400).json({ message: "bad notificationID!" });
+    if (notification.unread == false) return res.status(201).json({ message: "It has already been read!" })
+    notification.unread = false;
+    await notification.save()
+    res.status(200).json({ message: "Success: read notification." })
+})
 module.exports = router;

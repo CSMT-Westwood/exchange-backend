@@ -9,6 +9,7 @@ const loginRequired = require("../verifyToken"); //verifyToken.js
 const middlewares = require("../middlewares");
 const validation = require("./input_validations");
 const postserializer = require("./postserializer");
+const Notification = require("../models/Notification");
 const postTypeDict = {
     OFFER: 0,
     REQUEST: 1,
@@ -17,8 +18,7 @@ const postTypeDict = {
     SKILLS: 2,
     UNFULFILLED: 0,
     PENDING: 1,
-    PROCESSING: 2,
-    FULFILLED: 3
+    FULFILLED: 2
 };
 
 // FOR TESTING PURPOSES // FOR TESTING PURPOSES // FOR TESTING PURPOSES
@@ -128,7 +128,7 @@ router.get("/search", async (req, res) => {
 
         // only show the ones that are in the unfulfilled / pending stage
         results = results.filter(val => val.fulfilled <= 1);
-        
+
         // pop in the author info
         results = results.map((val) => {
             return postserializer.serialize(val);
@@ -142,30 +142,38 @@ router.get("/search", async (req, res) => {
     }
 });
 
-// user accepts a post
-router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, res) => {
-    const currPost = await Post.findOne({_id: req.body._id});
-    const postAuthor = await User.findOne({_id: currPost.author});
+// user follows a post
+router.post("/follow", [loginRequired, middlewares.getUserObject], async (req, res) => {
+    const currPost = await Post.findOne({ _id: req.body._id });
+    const postAuthor = await User.findOne({ _id: currPost.author });
     const currUser = req.user;
+
+    //validations
+    //the post is not fulfilled
+    if (currPost.fulfilled === postTypeDict.FULFILLED)
+        return res.status(400).json({ message: "Error: The post has been fulfilled!" });
+    //you cannot accept your own post
+    if (currUser._id.toString() === currPost.author)
+        return res.status(400).json({ message: "You cannot follow your own post!" });
 
     currPost.fulfilled = postTypeDict.PENDING;
 
     // if the user's already following the post, don't do anything
-    if (currPost.clients.includes(currUser._id) || 
+    if (currPost.clients.includes(currUser._id) ||
         currUser.followedPosts.includes(currPost._id)) {
-        if (currPost.typeOfPost === postTypeDict.OFFER && 
+        if (currPost.typeOfPost === postTypeDict.OFFER &&
             currPost.typeOfItem === postTypeDict.NOTES) {
-            return res.status(200).json({message: "Show Link"});
+            return res.status(200).json({ message: "Show Link" });
         }
-        return res.status(200).json({message: "You've already followed the post."});
+        return res.status(200).json({ message: "You've already followed the post." });
     }
 
     if (currUser._id === postAuthor._id) {
-        if (currPost.typeOfPost === postTypeDict.OFFER && 
+        if (currPost.typeOfPost === postTypeDict.OFFER &&
             currPost.typeOfItem === postTypeDict.NOTES) {
-            return res.status(200).json({message: "Show Link"});
+            return res.status(200).json({ message: "Show Link" });
         }
-        return res.status(200).json({message: "You've already followed the post."});
+        return res.status(200).json({ message: "You've already followed the post." });
     }
 
     // add the user to the list of followers of the post.
@@ -173,24 +181,143 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
     // add the post to the list of followed posts of the user.
     currUser.followedPosts.push(currPost._id);
 
-    if (currPost.typeOfPost === postTypeDict.OFFER && 
+    //add notification (type 2) for the client who accepted the post
+    const newNotice_client = new Notification({
+        recipient: currUser._id, //the client id
+        type: 2,
+        message: "You have followed the post. Please wait for response from the host.",
+        relatedPost: currPost._id, //the post id
+        relatedUser: currPost.author, //the id of the author of the post
+    })
+
+    //add notification (type 1) for the host
+    const newNotice_host = new Notification({
+        recipient: currPost.author, // id of host
+        type: 1,
+        message: "A user has responded to your post.",
+        relatedPost: currPost._id,  //id of the post
+        relatedUser: currUser._id, //id of client
+    })
+
+
+    if (currPost.typeOfPost === postTypeDict.OFFER &&
         currPost.typeOfItem === postTypeDict.NOTES) {           // if note&offer, change rp, return
         currUser.rp -= 5;
         postAuthor.rp += 5;
         await Promise.all([
             currUser.save(),
             postAuthor.save(),
-            currPost.save()
+            currPost.save(),
+            newNotice_client.save(),
+            newNotice_host.save()
         ]);
-        return res.status(200).json({message: "Show Link"});
+        return res.status(200).json({ message: "Show Link" });
     } else {
         await Promise.all([
             currUser.save(),
             postAuthor.save(),
-            currPost.save()
+            currPost.save(),
+            newNotice_client.save(),
+            newNotice_host.save()
         ]);
-        return res.status(200).json({message: "Your response has been recorded. Waiting for the post author's response"});
+        return res.status(200).json({ message: "Your response has been recorded. Waiting for the post author's response" });
     }
+})
+
+//host accepting a client API
+//req.body.postID : the id of the post
+//req.body.clientID: the id of the client
+router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (req, res) => {
+    const User_host = req.user;
+    let User_client, currPost;
+    try {
+        User_client = await User.findOne({ _id: req.body.clientID });
+    } catch (err) {
+        return res.status(400).json(err);
+    }
+    try {
+        currPost = await Post.findOne({ _id: req.body.postID });
+    } catch (err) {
+        return res.status(400).json(err);
+    }
+    if (User_client === null) return res.status(400).json({ message: "bad clientID!" });
+    if (currPost === null) return res.status(400).json({ message: "bad postID!" });
+    console.log(currPost);
+    //validations
+    //you need to be the author
+    if (currPost.author !== User_host._id.toString())
+        return res.status(400).json({ message: "You are not the host of the post!" });
+    //the post is PENDING
+    if (currPost.fulfilled !== postTypeDict.PENDING)
+        return res.status(400).json({ message: "The post is not at Pending stage" });
+    //the post is not OFFER&NOTES
+    if (currPost.typeOfItem === postTypeDict.NOTES && currPost.typeOfPost === postTypeDict.OFFER)
+        return res.status(400).json({ message: "a Notes offer cannot be fulfilled" });
+    //the client cannot be yourself
+    if (User_host._id.toString() === User_client._id.toString())
+        return res.status(400).json({ message: "You cannot choose yourself!" });
+    //the client is in post
+    if (!currPost.clients.includes(req.body.clientID))
+        return res.status(400).json({ message: "The user you specified did not accept the post" })
+
+
+    currPost.fulfilled = postTypeDict.FULFILLED;
+
+    //add reject notification to all unselected clients
+    newNotices_rejects = [];
+    for (client of currPost.clients) {
+        if (client !== User_client._id) {
+            newNotices_rejects.push(new Notification({
+                recipient: client,
+                type: 5,
+                message: "The host has accepted someone else.",
+                relatedPost: currPost._id,
+                relatedUser: currPost.author
+            }))
+        }
+    }
+    //pop all rejected clients in the post
+    currPost.clients = [];
+    currPost.clients.push(req.body.clientID);
+
+    //add notification (type 4) for the client chosen
+    const newNotice_client = new Notification({
+        recipient: User_client._id, //the client id
+        type: 4,
+        message: "You have been successfully accepted by the host. The post is now fulfilled.",
+        relatedPost: currPost._id, //the post id
+        relatedUser: currPost.author, //the id of the author of the post
+    })
+
+    //add notification (type 3) for the host
+    const newNotice_host = new Notification({
+        recipient: currPost.author, // id of host
+        type: 3,
+        message: "you have successfully accepted a client. Your post is now fulfilled.",
+        relatedPost: currPost._id,  //id of the post
+        relatedUser: User_client._id, //id of client
+    })
+    //update rp: both users rp+=10
+    User_client.rp += 10;
+    User_host.rp += 10;
+
+    //save documents
+    promises = [
+        User_client.save(),
+        User_host.save(),
+        newNotice_host.save(),
+        newNotice_client.save(),
+        currPost.save(),
+        newNotices_rejects.map(item => item.save())]
+    promises = promises.flat();
+
+    await Promise.all(promises);
+    return res.status(200).json({
+        message: "You have successfully accepted a client",
+        host: User_host,
+        client: User_client,
+        post: currPost
+    });
 })
 
 module.exports = router;

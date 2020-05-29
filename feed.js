@@ -4,6 +4,17 @@ const Post = require("./models/Post"); //get model
 const User = require("./models/User");
 const loginRequired = require("./verifyToken"); //verifyToken.js
 const middlewares = require("./middlewares");
+const serializer = require("./post/postserializer");
+
+
+async function serializePosts(posts) {
+    //populate post Objects with clients and author info
+    let res = (posts.map(post => {
+        return serializer.serialize(post);
+    }));
+    res = await Promise.all(res);
+    return res;
+}
 
 /*****GET FEED******/
 //login required
@@ -12,40 +23,41 @@ router.get(
     [loginRequired, middlewares.getUserObject],
     async (req, res) => {
         user = req.user;
-        let post;
+        let posts = [];
         //get posts by searching preferences
         let preferencePosts = [];
         for (item of user.preferences) {
-            post = await Post.find(
+            posts = posts.concat((Post.find(
                 { $text: { $search: item } },
                 { score: { $meta: "textScore" } }
-            ).sort({ score: { $meta: "textScore" } });
-            preferencePosts.concat(post);
+            ).sort({ score: { $meta: "textScore" } })));
         }
-
+        preferencePosts = (await Promise.all(posts)).flat();
+        posts = [];
         //get followedPosts
         let followedPosts = [];
         for (item of user.followedPosts) {
-            post = await Post.findOne({ _id: item });
-            if (post !== null) {
-                followedPosts.push(post);
-            }
+            posts.push(Post.findOne({ _id: item }));
         }
+        followedPosts = (await Promise.all(posts)).filter((v) => v !== null);
+        posts = [];
         //get the user's own posts
         let ownPosts = [];
+        console.log(user.posts);
         for (item of user.posts) {
-            post = await Post.findOne({ _id: item });
-            if (post !== null) ownPosts.push(post);
+            posts.push(Post.findOne({ _id: item }));
         }
 
-        //get posts that the user responded to
-        let activities = [];
-        for (item of user.activities) {
-            post = await Post.findOne({ _id: item });
-            if (post !== null) activities.push(post);
-        }
+        ownPosts = (await Promise.all(posts)).filter((v) => v !== null);
 
-        res.json({ preferencePosts, followedPosts, ownPosts, activities });
+        posts = [];
+
+        //populate post Objects with clients and author info
+        preferencePosts = await serializePosts(preferencePosts);
+        followedPosts = await serializePosts(followedPosts);
+        ownPosts = await serializePosts(ownPosts);
+
+        res.json({ preferencePosts, followedPosts, ownPosts });
     }
 );
 
@@ -56,75 +68,78 @@ router.get(
     [loginRequired, middlewares.getUserObject],
     async (req, res) => {
         //get the user's own posts
-        let post;
+        let posts = [];
         let ownPosts = {};
         ownPosts.unfulfilled = [];
         ownPosts.pending = [];
         ownPosts.fulfilled = [];
         //get unfulfilled
         for (item of user.posts) {
-            post = await Post.findOne({ _id: item, fulfilled: 0 });
-            if (post !== null) {
-                ownPosts.unfulfilled.push(post);
-            }
-        }
-        //get pending
-        for (item of user.posts) {
-            post = await Post.findOne({ _id: item, fulfilled: 1 });
-            if (post !== null) {
-                ownPosts.pending.push(post);
-            }
-        }
-        //get fulfilled
-        for (item of user.posts) {
-            post = await Post.findOne({ _id: item, fulfilled: 2 });
-            if (post !== null) {
-                ownPosts.fulfilled.push(post);
-            }
+            posts.push(Post.findOne({ _id: item, fulfilled: 0 }));
         }
 
+        ownPosts.unfulfilled = (await Promise.all(posts)).filter((v) => v !== null);
+        posts = [];
+
+        //get pending
+        for (item of user.posts) {
+            posts.push(Post.findOne({ _id: item, fulfilled: 1 }));
+        }
+        ownPosts.pending = (await Promise.all(posts)).filter((v) => v !== null);
+        posts = [];
+
+        //get fulfilled
+        for (item of user.posts) {
+            posts.push(Post.findOne({ _id: item, fulfilled: 2 }));
+        }
+        ownPosts.fulfilled = (await Promise.all(posts)).filter((v) => v !== null);
+
+        ownPosts.unfulfilled = await serializePosts(ownPosts.unfulfilled);
+        ownPosts.pending = await serializePosts(ownPosts.pending);
+        ownPosts.fulfilled = await serializePosts(ownPosts.fulfilled);
         return res.json(ownPosts);
     }
 );
 
 /****GET POSTS that user responded to****/
-
+/*
 router.get(
     "/activities/",
     [loginRequired, middlewares.getUserObject],
     async (req, res) => {
         //get the user's own posts
-        let post;
+        let posts = [];
         let activities = {};
         activities.unfulfilled = [];
         activities.pending = [];
         activities.fulfilled = [];
         //get unfulfilled
         for (item of user.activities) {
-            post = await Post.findOne({ _id: item, fulfilled: 0 });
-            if (post !== null) {
-                activities.unfulfilled.push(post);
-            }
+            posts.push(Post.findOne({ _id: item, fulfilled: 0 }));
         }
+        activities.unfulfilled = (await (Promise.all(posts))).filter((v) => v !== null);
+        posts = [];
         //get pending
         for (item of user.activities) {
-            post = await Post.findOne({ _id: item, fulfilled: 1 });
-            if (post !== null) {
-                activities.pending.push(post);
-            }
+            posts.push(Post.findOne({ _id: item, fulfilled: 1 }));
         }
+        activities.pending = (await Promise.all(posts)).filter((v) => v !== null);
+
+        posts = [];
         //get fulfilled
         for (item of user.activities) {
-            post = await Post.findOne({ _id: item, fulfilled: 2 });
-            if (post !== null) {
-                activities.fulfilled.push(post);
-            }
+            post.push(Post.findOne({ _id: item, fulfilled: 2 }));
         }
+        activities.fulfilled = (await Promise.all(posts)).filter((v) => v !== null);
+
+        activities.unfulfilled = await serializePosts(activities.unfulfilled);
+        activities.pending = await serializePosts(activities.pending);
+        activities.fulfilled = await serializePosts(activities.fulfilled);
 
         return res.json(activities);
     }
 );
-
+*/
 /****GET Followed POSTS****/
 
 router.get(
@@ -132,33 +147,32 @@ router.get(
     [loginRequired, middlewares.getUserObject],
     async (req, res) => {
         //get the user's own posts
-        let post;
+        let posts = [];
         let followedPosts = {};
         followedPosts.unfulfilled = [];
         followedPosts.pending = [];
         followedPosts.fulfilled = [];
         //get unfulfilled
         for (item of user.followedPosts) {
-            post = await Post.findOne({ _id: item, fulfilled: 0 });
-            if (post !== null) {
-                followedPosts.unfulfilled.push(post);
-            }
+            posts.push(Post.findOne({ _id: item, fulfilled: 0 }));
         }
+        followedPosts.unfulfilled = (await Promise.all(posts)).filter((v) => v !== null);
+        posts = [];
         //get pending
         for (item of user.followedPosts) {
-            post = await Post.findOne({ _id: item, fulfilled: 1 });
-            if (post !== null) {
-                followedPosts.pending.push(post);
-            }
+            posts.push(Post.findOne({ _id: item, fulfilled: 1 }));
         }
+        followedPosts.pending = (await Promise.all(posts)).filter((v) => v !== null);
+        posts = [];
         //get fulfilled
         for (item of user.followedPosts) {
-            post = await Post.findOne({ _id: item, fulfilled: 2 });
-            if (post !== null) {
-                followedPosts.fulfilled.push(post);
-            }
+            post.push(Post.findOne({ _id: item, fulfilled: 2 }));
         }
+        followedPosts.fulfilled = (await Promise.all(posts)).filter((v) => v !== null);
 
+        followedPosts.unfulfilled = await serializePosts(followedPosts.unfulfilled);
+        followedPosts.pending = await serializePosts(followedPosts.pending);
+        followedPosts.fulfilled = await serializePosts(followedPosts.fulfilled);
         return res.json(followedPosts);
     }
 );
