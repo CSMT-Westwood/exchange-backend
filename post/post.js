@@ -249,7 +249,7 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
         return res.status(400).json({ message: "You are not the host of the post!" });
     //the post is PENDING
     if (currPost.fulfilled !== postTypeDict.PENDING)
-        return res.status(400).json({ message: "The post is not at Pending stage(i.e. there is no client)" })
+        return res.status(400).json({ message: "The post is not at Pending stage" });
     //the post is not OFFER&NOTES
     if (currPost.typeOfItem === postTypeDict.NOTES && currPost.typeOfPost === postTypeDict.OFFER)
         return res.status(400).json({ message: "a Notes offer cannot be fulfilled" });

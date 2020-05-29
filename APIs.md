@@ -10,6 +10,7 @@
     4. [Get Logged-in User Profile](#get-self-profile)
     5. [Update User Profile](#user-update)
     6. [Update User Avatar](#user-avatar)
+    7. [Get all notifications](#notifications)
 2. [Offer / Request](#offreq)
     1. [Make a Post](#make-a-post)
     2. [Search for Posts](#post-search)
@@ -17,6 +18,9 @@
     1. [getFeed](#getFeed)
     2. [get My Posts](#getMyPosts)
     3. [get Followed Posts](#getFollowedPosts)
+4. [User-Post interaction](#userPost)
+    1. [client accepts a post](#accept)
+    2. [host accept a client](#chooseClient)
 
 ## User Related <a name="login"></a>
 
@@ -240,6 +244,71 @@
         "message":"<error_message>"
     }
     ```
+
+### 7. Get Notifications <a name="notifications"></a>
+
+-   End point: `POST /user/notifications`
+-   Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json"
+        "token":"<login_token>"
+    }
+    ```
+-   Request Body:
+    ```javascript
+    {
+    }
+    ```
+-   Response:
+    -   `200 OK`
+        ```javascript
+        [
+            {
+                "unread": true,
+                "relatedPost": null,
+                "relatedUser": null,
+                "_id": "5ed04d69b96a093be0da80e2",
+                "recipient": "5ed04d69b96a093be0da80e1",
+                "type": 0,
+                "message": "Welcome to eXchange!",
+                "activity_date": "2020-05-28T23:46:49.487Z",
+                "__v": 0
+            },
+            {
+                "unread": true,
+                "relatedPost": "5ed04f61b96a093be0da80eb",
+                "relatedUser": "5ed04d6eb96a093be0da80e3",
+                "_id": "5ed058a22b26e3660ce28a2d",
+                "recipient": "5ed04d69b96a093be0da80e1",
+                "type": 2,
+                "message": "You have followed the post. Please wait for response from the host.",
+                "activity_date": "2020-05-29T00:34:42.502Z",
+                "__v": 0
+            }
+            {
+                <NotificationObj>
+            }
+        ]
+        ```
+    -   `400 Bad Request` 
+        ```javascript
+        {
+            "message": "<error_message>"
+        }
+        ```
+
+- Notification type numbers:
+    '''
+    0: welcome. Appears when first sign up.
+    Client accepts posts:
+        1: a client has responded to your post(offer/request)
+        2: You (as a client) have accepted a post. Please wait for response from host.
+    Host accepts:
+        3: You (as a host) have accepted a client. The post is fulfilled.
+        4: You (as a client) have been accepted. 
+        5. The client did not select you(rejected). The post is fulfilled.
+    '''
 
 ## Offer / Request <a name="offreq"></a>
 
@@ -553,3 +622,140 @@
     }
 
     ```
+
+## Feed <a name="userPost"></a>
+
+### 1. client accepts a post <a name="accept"></a>
+
+- End point: `POST /post/accept`
+- Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json",
+        "token": "<login_token>"
+    }
+    ```
+- Request Body:
+    ```javascript
+    {
+        "_id":"<postID>"
+    }
+    ```
+
+- Response:
+    - `200 OK`
+        ```javascript
+        {
+            "message":"<success_message>"
+        }
+        ```
+    - `400 Bad Request`
+        ```javascript
+        {
+            "message":"<error_message>"
+        }
+        ```    
+
+### 2. host accepts a client <a name= "chooseClient"></a>
+
+- End point: `POST /post/chooseClient`
+- Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json",
+        "token": "<login_token>"
+    }
+    ```
+- Request Body:
+    ```javascript
+    {
+        "postID":"<postID>",
+        "clientID":"<clientID>"
+    }
+    ```
+
+- Response:
+    - `200 OK`
+        ```javascript
+        {
+            "message":"<success_message>",
+            "host": <UserObj>",
+            "client":<UserObj>,
+            "post":<PostObj>
+        }
+        ```
+
+    -  example:
+        ```javascript
+        {
+        "message": "You have successfully accepted a client",
+        "host": {
+            "info": {
+            "num_of_followers": 0,
+            "last_login": "2020-05-28T23:53:53.789Z",
+            "date_of_creation": "2020-05-28T23:46:54.239Z"
+        },
+            "preferences": [],
+            "posts": [
+                "5ed04f50b96a093be0da80e8",
+                "5ed04f57b96a093be0da80e9",
+                "5ed04f5fb96a093be0da80ea",
+                "5ed04f61b96a093be0da80eb" 
+            ],
+            "followedPosts": [],
+            "rp": 100,
+            "avatar": null,
+            "avatar_ID": null,
+            "_id": "5ed04d6eb96a093be0da80e3",
+            "username": "tuser1",
+            "password": "$2a$10$njQCGkC8wis0S7RGK47sB.i4nv0PtofWmVVNAAua5RX8SSNxPGrMi",
+            "email": "tuser1@ucla.edu",
+            "__v": 4
+        },
+        "client": {
+            "info": {
+                "num_of_followers": 0,
+                "last_login": "2020-05-29T00:38:25.042Z",
+                "date_of_creation": "2020-05-28T23:46:42.020Z"
+            },
+            "preferences": [],
+            "posts": [],
+            "followedPosts": [
+                "5ed050d4b96a093be0da80ec",
+                "5ed04f61b96a093be0da80eb",
+                "5ed04f5fb96a093be0da80ea",
+                "5ed04f57b96a093be0da80e9",
+                "5ed04f50b96a093be0da80e8"
+            ],
+            "rp": 110,
+            "avatar": null,
+            "avatar_ID": null,
+            "_id": "5ed04d62b96a093be0da80df",
+            "username": "tuser3",
+            "password": "$2a$10$SXY972qKmLYBVQxiv.MiFeDjAbr7nYU28FndyQWseFdTH130c90FO",
+            "email": "tuser3@ucla.edu",
+            "__v": 5
+        },
+        "post": {
+            "fulfilled": 2,
+            "clients": [
+                "5ed04d62b96a093be0da80df"
+            ],
+            "_id": "5ed04f57b96a093be0da80e9",
+            "typeOfPost": 0,
+            "typeOfItem": 0,
+            "itemName": "tuser1's book2",
+            "description": "none",
+            "author": "5ed04d6eb96a093be0da80e3",
+            "publication_date": "2020-05-28T23:55:03.387Z",
+            "__v": 2
+        }
+        }
+        ```
+        
+    - `400 Bad Request`
+        ```javascript
+        {
+            "message":"<error_message>"
+        }
+        ```    
