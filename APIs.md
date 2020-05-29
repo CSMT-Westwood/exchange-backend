@@ -282,7 +282,7 @@
                 "_id": "5ed058a22b26e3660ce28a2d",
                 "recipient": "5ed04d69b96a093be0da80e1",
                 "type": 2,
-                "message": "You have followed the post. Please wait for response from the host.",
+                "message": "You have followed the post. Please wait for the host to respond.",
                 "activity_date": "2020-05-29T00:34:42.502Z",
                 "__v": 0
             }

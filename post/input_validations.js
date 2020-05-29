@@ -7,7 +7,7 @@ const NewPostSchema = Joi.object({
     itemName: Joi.string().max(50).required(),
     condition: Joi.number().integer().min(0).max(3),
     description: Joi.string().max(140).required(),
-    link: Joi.string(),
+    link: Joi.string().allow('').optional(),
     fulfilled: Joi.number().integer().min(0).max(3),
 });
 

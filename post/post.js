@@ -173,7 +173,7 @@ router.post("/follow", [loginRequired, middlewares.getUserObject], async (req, r
             currPost.typeOfItem === postTypeDict.NOTES) {
             return res.status(200).json({ message: "Show Link" });
         }
-        return res.status(200).json({ message: "You've already followed the post." });
+        return res.status(200).json({ message: "You cannot follow your own post!" });
     }
 
     // add the user to the list of followers of the post.
@@ -185,7 +185,7 @@ router.post("/follow", [loginRequired, middlewares.getUserObject], async (req, r
     const newNotice_client = new Notification({
         recipient: currUser._id, //the client id
         type: 2,
-        message: "You have followed the post. Please wait for response from the host.",
+        message: "You have followed the post. Please wait for the host to respond.",
         relatedPost: currPost._id, //the post id
         relatedUser: currPost.author, //the id of the author of the post
     })
