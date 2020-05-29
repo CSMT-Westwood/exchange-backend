@@ -299,7 +299,7 @@
         ```
 
 - Notification type numbers:
-    '''
+    '''javascript
     0: welcome. Appears when first sign up.
     Client accepts posts:
         1: a client has responded to your post(offer/request)
@@ -752,7 +752,7 @@
         }
         }
         ```
-        
+
     - `400 Bad Request`
         ```javascript
         {
