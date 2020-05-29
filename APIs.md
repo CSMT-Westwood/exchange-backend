@@ -19,7 +19,7 @@
     2. [get My Posts](#getMyPosts)
     3. [get Followed Posts](#getFollowedPosts)
 4. [User-Post interaction](#userPost)
-    1. [client accepts a post](#accept)
+    1. [client marks a post as Interested](#accept)
     2. [host accept a client](#chooseClient)
 
 ## User Related <a name="login"></a>
@@ -302,8 +302,8 @@
 
     - `0: welcome. Appears when first sign up.`
     - Client accepts posts:
-        - `1: a client has responded to your post(offer/request)`
-        - `2: You (as a client) have accepted a post. Please wait for response from host.`
+        - `1: a client has followed to your post(offer/request)`
+        - `2: You (as a client) have followed a post. Please wait for response from host.`
     - Host accepts:
         - `3: You (as a host) have accepted a client. The post is fulfilled.`
         - `4: You (as a client) have been accepted. `
@@ -654,9 +654,9 @@
 
 ## Feed <a name="userPost"></a>
 
-### 1. client accepts a post <a name="accept"></a>
+### 1. client marks a post as Interested <a name="accept"></a>
 
-- End point: `POST /post/accept`
+- End point: `POST /post/follow`
 - Headers:
     ```javascript
     {

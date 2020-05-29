@@ -142,8 +142,8 @@ router.get("/search", async (req, res) => {
     }
 });
 
-// user accepts a post
-router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, res) => {
+// user follows a post
+router.post("/follow", [loginRequired, middlewares.getUserObject], async (req, res) => {
     const currPost = await Post.findOne({ _id: req.body._id });
     const postAuthor = await User.findOne({ _id: currPost.author });
     const currUser = req.user;
@@ -154,7 +154,7 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
         return res.status(400).json({ message: "Error: The post has been fulfilled!" });
     //you cannot accept your own post
     if (currUser._id.toString() === currPost.author)
-        return res.status(400).json({ message: "You cannot accept your own post!" });
+        return res.status(400).json({ message: "You cannot follow your own post!" });
 
     currPost.fulfilled = postTypeDict.PENDING;
 
