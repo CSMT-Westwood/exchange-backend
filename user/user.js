@@ -216,4 +216,16 @@ router.get("/notifications", [loginRequired, middlewares.getUserObject], async (
     }
 })
 
+/*READ NOTIFICATION */
+//Notification.unread: true--->false
+//req.body.notificationID
+router.post("/readNotification", [loginRequired, middlewares.getUserObject], async (req, res) => {
+    const currUser = req.user;
+    const notification = await Notification.findOne({ _id: req.body.notificationID });
+    if (notification === null) return res.status(400).json({ message: "bad notificationID!" });
+    if (notification.unread == false) return res.status(201).json({ message: "It has already been read!" })
+    notification.unread = false;
+    await notification.save()
+    res.status(200).json({ message: "Success: read notification." })
+})
 module.exports = router;

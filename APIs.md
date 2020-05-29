@@ -308,8 +308,37 @@
         - `3: You (as a host) have accepted a client. The post is fulfilled.`
         - `4: You (as a client) have been accepted. `
         - `5. The client did not select you(rejected). The post is fulfilled.`
-   
 
+### 8. Read Notifications <a name="readNotifications"></a>
+
+- End point: `POST /user/readNotification`
+- Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json",
+        "token": "<login_token>"
+    }
+    ```
+-   Request Body:
+    ```javascript
+    {
+        "notificationID":"<notificationID_to_read>"
+    }
+    ```
+    
+- Response:
+    - `200 OK`
+    ```javascript
+    {
+    "message": "Success: read notification."
+    }
+    ```
+    - `400 Bad Request`
+    ```javascript
+    {
+    "message": "<error_message>"
+    }
+    ```
 ## Offer / Request <a name="offreq"></a>
 
 ### 1. Make a Post <a name="make-a-post"></a>
