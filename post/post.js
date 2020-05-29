@@ -18,8 +18,7 @@ const postTypeDict = {
     SKILLS: 2,
     UNFULFILLED: 0,
     PENDING: 1,
-    PROCESSING: 2,
-    FULFILLED: 3
+    FULFILLED: 2
 };
 
 // FOR TESTING PURPOSES // FOR TESTING PURPOSES // FOR TESTING PURPOSES
@@ -149,6 +148,14 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
     const postAuthor = await User.findOne({ _id: currPost.author });
     const currUser = req.user;
 
+    //validations
+    //the post is not fulfilled
+    if (currPost.fulfilled === postTypeDict.FULFILLED)
+        return res.status(400).json({ message: "Error: The post has been fulfilled!" });
+    //you cannot accept your own post
+    if (currUser._id.toString() === currPost.author)
+        return res.status(400).json({ message: "You cannot accept your own post!" });
+
     currPost.fulfilled = postTypeDict.PENDING;
 
     // if the user's already following the post, don't do anything
@@ -218,21 +225,50 @@ router.post("/accept", [loginRequired, middlewares.getUserObject], async (req, r
 })
 
 //host accepting a client API
-//req.postID : the id of the post
-//req.clientID: the id of the client
+//req.body.postID : the id of the post
+//req.body.clientID: the id of the client
 router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (req, res) => {
     const User_host = req.user;
-    const User_client = await User.findOne({ _id: req.body.clientID });
-    const currPost = await Post.findOne({ _id: req.body.postID });
+    let User_client, currPost;
+    try {
+        User_client = await User.findOne({ _id: req.body.clientID });
+    } catch (err) {
+        return res.status(400).json(err);
+    }
+    try {
+        currPost = await Post.findOne({ _id: req.body.postID });
+    } catch (err) {
+        return res.status(400).json(err);
+    }
+    if (User_client === null) return res.status(400).json({ message: "bad clientID!" });
+    if (currPost === null) return res.status(400).json({ message: "bad postID!" });
+    console.log(currPost);
+    //validations
+    //you need to be the author
+    if (currPost.author !== User_host._id.toString())
+        return res.status(400).json({ message: "You are not the host of the post!" });
+    //the post is PENDING
+    if (currPost.fulfilled !== postTypeDict.PENDING)
+        return res.status(400).json({ message: "The post is not at Pending stage(i.e. there is no client)" })
+    //the post is not OFFER&NOTES
+    if (currPost.typeOfItem === postTypeDict.NOTES && currPost.typeOfPost === postTypeDict.OFFER)
+        return res.status(400).json({ message: "a Notes offer cannot be fulfilled" });
+    //the client cannot be yourself
+    if (User_host._id.toString() === User_client._id.toString())
+        return res.status(400).json({ message: "You cannot choose yourself!" });
+    //the client is in post
+    if (!currPost.clients.includes(req.body.clientID))
+        return res.status(400).json({ message: "The user you specified did not accept the post" })
+
 
     currPost.fulfilled = postTypeDict.FULFILLED;
 
     //add reject notification to all unselected clients
     newNotices_rejects = [];
     for (client of currPost.clients) {
-        if (client._id !== User_client._id) {
+        if (client !== User_client._id) {
             newNotices_rejects.push(new Notification({
-                recipient: client._id,
+                recipient: client,
                 type: 5,
                 message: "The host has accepted someone else.",
                 relatedPost: currPost._id,
@@ -271,11 +307,17 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
         User_host.save(),
         newNotice_host.save(),
         newNotice_client.save(),
+        currPost.save(),
         newNotices_rejects.map(item => item.save())]
     promises = promises.flat();
 
     await Promise.all(promises);
-    return res.status(200).json({ message: "You have successfully accepted a client" });
+    return res.status(200).json({
+        message: "You have successfully accepted a client",
+        host: User_host,
+        client: User_client,
+        post: currPost
+    });
 })
 
 module.exports = router;
