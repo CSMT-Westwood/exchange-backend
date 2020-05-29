@@ -299,16 +299,16 @@
         ```
 
 - Notification type numbers:
-    '''javascript
-    0: welcome. Appears when first sign up.
-    Client accepts posts:
-        1: a client has responded to your post(offer/request)
-        2: You (as a client) have accepted a post. Please wait for response from host.
-    Host accepts:
-        3: You (as a host) have accepted a client. The post is fulfilled.
-        4: You (as a client) have been accepted. 
-        5. The client did not select you(rejected). The post is fulfilled.
-    '''
+
+    - `0: welcome. Appears when first sign up.`
+    - Client accepts posts:
+        - `1: a client has responded to your post(offer/request)`
+        - `2: You (as a client) have accepted a post. Please wait for response from host.`
+    - Host accepts:
+        - `3: You (as a host) have accepted a client. The post is fulfilled.`
+        - `4: You (as a client) have been accepted. `
+        - `5. The client did not select you(rejected). The post is fulfilled.`
+   
 
 ## Offer / Request <a name="offreq"></a>
 
