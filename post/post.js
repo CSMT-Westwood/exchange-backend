@@ -320,4 +320,10 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
     });
 })
 
+router.get("/searchByID/:id", async (req, res) => {
+    const post = await Post.findOne({ _id: req.params.id });
+    if (post === null) return res.status(400).json({ message: "Bad UserID!" });
+    res.status(200).json(post);
+});
+
 module.exports = router;

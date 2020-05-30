@@ -24,6 +24,7 @@
 5. [Helper APIs](#helper)
     1. [getUser by ID](#getUserByID)
     2. [getUser by userame](#getUserByUsername)
+    3. [getPost by ID](#getPostByID)
 
 ## User Related <a name="login"></a>
 
@@ -796,7 +797,7 @@
 
 ### 1. Get User by ID <a name="getUserByID"></a>
 
--   End point: `GET /searchByID/<User ID to search>`  
+-   End point: `GET user/searchByID/<User ID to search>`  
 -   Headers:
     ```javascript
     {
@@ -843,7 +844,7 @@
 
 ### 2. Get User by UserName <a name="getUserByID"></a>
 
--   End point: `GET /searchUser/<username to search>`  
+-   End point: `GET user/searchUser/<username to search>`  
 -   Headers:
     ```javascript
     {
@@ -887,3 +888,38 @@
         }
         ```
     -   `400 Bad Request` Cause: Bad username
+
+### 3. Get Post by ID <a name="getPostByID"></a>
+
+-   End point: `GET post/searchByID/<Post ID to search>`  
+-   Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json"
+    }
+    ```
+-   Request Body:
+    ```javascript
+    {
+        Nothing
+    }
+    ```
+-   Response:
+    -   `200 OK`
+        ```javascript
+        {
+            {
+                "fulfilled": 0,
+                "clients": [<clientID>, <clientID>],
+                "_id": "5ed09fdfbf76217c103c724b",
+                "typeOfPost": 0,
+                "typeOfItem": 0,
+                "itemName": "post1",
+                "description": "This is a offer of testing book with fuifillment 0",
+                "author": "5ed09f1ebf76217c103c7249",
+                "publication_date": "2020-05-29T05:38:39.288Z",
+                "__v": 0
+            }
+        }
+        ```
+    -   `400 Bad Request` Cause: Bad ID
