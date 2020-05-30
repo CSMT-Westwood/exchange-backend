@@ -19,12 +19,19 @@ router.get("/", async (req, res) => {
 });
 
 //find user by username. Needs login token in the header
-router.get("/searchUser/:username", loginRequired, async (req, res) => {
-    const user = await User.find({ username: req.params.username });
+router.get("/searchUser/:username", async (req, res) => {
+    const user = await User.find({ username: req.params.username }).select("-password -avatar_ID");
     if (user.length == 0)
         return res.status(404).json({ message: "User not found." });
     res.status(200).json(user);
 });
+
+//Get User by ID
+router.get("/searchByID/:id", async (req, res) => {
+    const user = await User.findOne({ _id: req.params.id }).select("-password -avatar_ID");
+    if (user === null) return res.status(400).json({ message: "Bad UserID!" });
+    res.status(200).json(user);
+})
 
 /******User Signup API******/
 router.post("/signup", async (req, res) => {

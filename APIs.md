@@ -21,6 +21,9 @@
 4. [User-Post interaction](#userPost)
     1. [client marks a post as Interested](#accept)
     2. [host accept a client](#chooseClient)
+5. [Helper APIs](#helper)
+    1. [getUser by ID](#getUserByID)
+    2. [getUser by userame](#getUserByUsername)
 
 ## User Related <a name="login"></a>
 
@@ -788,3 +791,99 @@
             "message":"<error_message>"
         }
         ```    
+
+## Helper APIs <a name="helper"></a>
+
+### 1. Get User by ID <a name="getUserByID"></a>
+
+-   End point: `GET /searchByID/<User ID to search>`  
+-   Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json"
+    }
+    ```
+-   Request Body:
+    ```javascript
+    {
+        Nothing
+    }
+    ```
+-   Response:
+    -   `200 OK`
+        ```javascript
+        {
+            {
+                "info": {
+                    "num_of_followers": 0,
+                    "last_login": "2020-05-30T09:03:17.047Z",
+                    "date_of_creation": "2020-05-29T05:35:26.628Z"
+                },
+                "preferences":[],
+                "posts": [
+                    "5ed09fdfbf76217c103c724b",
+                    "5ed09ffabf76217c103c724c",
+                    "5ed09ffebf76217c103c724d",
+                    "5ed0a000bf76217c103c724e",
+                ],
+                "followedPosts": [
+                    <PostID>,
+                    <PostID>
+                ],
+                "rp": 10,
+                "avatar": <avatar_link>,
+                "_id": "5ed09f1ebf76217c103c7249",
+                "username": "testingbot",
+                "email": "testtest@ucla.edu",
+                "__v": 13
+            }
+        }
+        ```
+    -   `400 Bad Request` Cause: Bad ID
+
+### 2. Get User by UserName <a name="getUserByID"></a>
+
+-   End point: `GET /searchUser/<username to search>`  
+-   Headers:
+    ```javascript
+    {
+        "Content-Type": "application/json"
+    }
+    ```
+-   Request Body:
+    ```javascript
+    {
+        Nothing
+    }
+    ```
+-   Response:
+    -   `200 OK`
+        ```javascript
+        {
+            {
+                "info": {
+                    "num_of_followers": 0,
+                    "last_login": "2020-05-30T09:03:17.047Z",
+                    "date_of_creation": "2020-05-29T05:35:26.628Z"
+                },
+                "preferences":[],
+                "posts": [
+                    "5ed09fdfbf76217c103c724b",
+                    "5ed09ffabf76217c103c724c",
+                    "5ed09ffebf76217c103c724d",
+                    "5ed0a000bf76217c103c724e",
+                ],
+                "followedPosts": [
+                    <PostID>,
+                    <PostID>
+                ],
+                "rp": 10,
+                "avatar": <avatar_link>,
+                "_id": "5ed09f1ebf76217c103c7249",
+                "username": "testingbot",
+                "email": "testtest@ucla.edu",
+                "__v": 13
+            }
+        }
+        ```
+    -   `400 Bad Request` Cause: Bad username
