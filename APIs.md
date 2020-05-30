@@ -430,9 +430,11 @@
             "publication_date": "<publication_date>",
             "__v": "<ignore_this>",
             "author": {
+                "_id":"<id>"
                 "username": "<usename>",
                 "rp": "<rp>",
-                "email": "<email>"
+                "email": "<email>",
+                "avatar":<avatarlink>
             },
             "clients": [
                 {
@@ -493,6 +495,7 @@
                 "username": "TonyXia",
                 "email": "Tony12345@g.ucla.edu",
                 "rp": 1505
+                "avatar":<avatarlink>
             },
             "publication_date": "2020-05-21T01:18:11.235Z",
             "__v": 0
@@ -548,7 +551,8 @@
                 "_id": "5ec0e0d707a63f58a074bf3f",
                 "rp": 10,
                 "username": "frank1",
-                "email": "zhou123456@ucla.edu"
+                "email": "zhou123456@ucla.edu",
+                "avatar":<avatarlink>
             },
             "publication_date": "2020-05-21T01:16:55.879Z",
             "__v": 0
@@ -565,7 +569,8 @@
                 "_id": "5ec0e0d707a63f58a074bf3f",
                 "rp": 10,
                 "username": "frank1",
-                "email": "zhou123456@ucla.edu"
+                "email": "zhou123456@ucla.edu",
+                "avatar":<avatarlink>
             },
             "publication_date": "2020-05-21T01:17:48.442Z",
             "__v": 0
@@ -598,7 +603,8 @@
                 "_id": "5ec0e0d707a63f58a074bf3f",
                 "rp": 10,
                 "username": "frank1",
-                "email": "zhou123456@ucla.edu"
+                "email": "zhou123456@ucla.edu",
+                "avatar":<avatarlink>
             },
             "publication_date": "2020-05-21T01:18:27.270Z",
             "__v": 0
@@ -656,7 +662,7 @@
 
     ```
 
-## Feed <a name="userPost"></a>
+## User-Post Interaction <a name="userPost"></a>
 
 ### 1. client marks a post as Interested <a name="accept"></a>
 
@@ -910,13 +916,28 @@
         {
             {
                 "fulfilled": 0,
-                "clients": [<clientID>, <clientID>],
+                "clients": [
+                    {
+                        "_id": "5ed04d62b96a093be0da80df",
+                        "rp": 110,
+                        "avatar": null,
+                        "username": "tuser3",
+                        "email": "tuser3@ucla.edu"
+                    },
+                    <Same as above>
+                ],
                 "_id": "5ed09fdfbf76217c103c724b",
                 "typeOfPost": 0,
                 "typeOfItem": 0,
                 "itemName": "post1",
                 "description": "This is a offer of testing book with fuifillment 0",
-                "author": "5ed09f1ebf76217c103c7249",
+                "author": {
+                    "_id": "5ed04d6eb96a093be0da80e3",
+                    "rp": 100,
+                    "avatar": null,
+                    "username": "tuser1",
+                    "email": "tuser1@ucla.edu"
+                },
                 "publication_date": "2020-05-29T05:38:39.288Z",
                 "__v": 0
             }

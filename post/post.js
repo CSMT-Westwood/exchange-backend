@@ -321,8 +321,9 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
 })
 
 router.get("/searchByID/:id", async (req, res) => {
-    const post = await Post.findOne({ _id: req.params.id });
+    let post = await Post.findOne({ _id: req.params.id });
     if (post === null) return res.status(400).json({ message: "Bad UserID!" });
+    post = await postserializer.serialize(post);
     res.status(200).json(post);
 });
 

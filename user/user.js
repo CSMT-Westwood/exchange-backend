@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
     res.json(AllUsers);
 });
 
-//find user by username. Needs login token in the header
+//find user by username. 
 router.get("/searchUser/:username", async (req, res) => {
     const user = await User.find({ username: req.params.username }).select("-password -avatar_ID");
     if (user.length == 0)
