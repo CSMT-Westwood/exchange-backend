@@ -247,7 +247,7 @@
 
 ### 7. Get Notifications <a name="notifications"></a>
 
--   End point: `POST /user/notifications`
+-   End point: `GET /user/notifications`
 -   Headers:
     ```javascript
     {
