@@ -166,13 +166,14 @@ router.get(
         posts = [];
         //get fulfilled
         for (item of user.followedPosts) {
-            post.push(Post.findOne({ _id: item, fulfilled: 2 }));
+            posts.push(Post.findOne({ _id: item, fulfilled: 2 }));
         }
         followedPosts.fulfilled = (await Promise.all(posts)).filter((v) => v !== null);
 
         followedPosts.unfulfilled = await serializePosts(followedPosts.unfulfilled);
         followedPosts.pending = await serializePosts(followedPosts.pending);
         followedPosts.fulfilled = await serializePosts(followedPosts.fulfilled);
+        
         return res.json(followedPosts);
     }
 );
