@@ -451,7 +451,6 @@
 
     ```javascript
     {
-        "Content-Type": "multipart/form-data",
         "token": "<login_token>"
     }
     ```
@@ -468,42 +467,39 @@
 
     ```javascript
     {
-    "preferencePosts":[
-        {
-            "fulfilled": 1,
-            "clients":[
-                {
-                "_id": "5ec0e0d707a63f58a074bf3f",
-                "rp": 10,
-                "username": "frank1",
-                "email": "zhou123456@ucla.edu"
-                }
-            ]
-            "_id":"5ec596f9503339e002e2e010",
-            "typeOfPost": 0,
-            "typeOfItem": 0,
-            "itemName": "cs97",
-            "description": "This is the best class ever(fulfilled)",
-            "author":  {
-                "_id": "5eb882153e72a51110bec821",
-                "username": "TonyXia",
-                "email": "Tony12345@g.ucla.edu",
-                "rp": 1505
+        "preference1":[
+            {
+                "fulfilled": 1,
+                "clients":[
+                    {
+                    "_id": "5ec0e0d707a63f58a074bf3f",
+                    "rp": 10,
+                    "username": "frank1",
+                    "email": "zhou123456@ucla.edu"
+                    }
+                ]
+                "_id":"5ec596f9503339e002e2e010",
+                "typeOfPost": 0,
+                "typeOfItem": 0,
+                "itemName": "cs97",
+                "description": "This is the best class ever(fulfilled)",
+                "author":  {
+                    "_id": "5eb882153e72a51110bec821",
+                    "username": "TonyXia",
+                    "email": "Tony12345@g.ucla.edu",
+                    "rp": 1505
+                },
+                "publication_date": "2020-05-21T01:18:11.235Z",
+                "__v": 0
             },
-            "publication_date": "2020-05-21T01:18:11.235Z",
-            "__v": 0
-        },
-        {<same as above>},
-        {<same as above>}
-    ],
-    "followedPosts": [
-        {<same as above>},
-        {<same as above>}
-    ],
-    "ownPosts": [
-        {<same as above>},
-        {<same as above>}
-    ]
+            {<same as above>},
+            {<same as above>}
+        ],
+        "preference2": [
+            {<same as above>},
+            {<same as above>}
+        ],
+        ... // more
     }
 
     ```
