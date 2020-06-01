@@ -25,39 +25,28 @@ router.get(
         user = req.user;
         let posts = [];
         //get posts by searching preferences
-        let preferencePosts = [];
+        let preferencePosts = {};
         for (item of user.preferences) {
-            posts = posts.concat((Post.find(
+            posts = [];
+            posts = Post.find(
                 { $text: { $search: item } },
                 { score: { $meta: "textScore" } }
-            ).sort({ score: { $meta: "textScore" } })));
+            ).sort({ score: { $meta: "textScore" } });
+            preferencePosts[item] = await posts;
         }
-        preferencePosts = (await Promise.all(posts)).flat();
-        posts = [];
-        //get followedPosts
-        let followedPosts = [];
-        for (item of user.followedPosts) {
-            posts.push(Post.findOne({ _id: item }));
-        }
-        followedPosts = (await Promise.all(posts)).filter((v) => v !== null);
-        posts = [];
-        //get the user's own posts
-        let ownPosts = [];
-        console.log(user.posts);
-        for (item of user.posts) {
-            posts.push(Post.findOne({ _id: item }));
-        }
-
-        ownPosts = (await Promise.all(posts)).filter((v) => v !== null);
-
-        posts = [];
-
+        
         //populate post Objects with clients and author info
-        preferencePosts = await serializePosts(preferencePosts);
-        followedPosts = await serializePosts(followedPosts);
-        ownPosts = await serializePosts(ownPosts);
-
-        res.json({ preferencePosts, followedPosts, ownPosts });
+        promises = [];
+        for (let item of user.preferences) {
+            promises.push(serializePosts(preferencePosts[item]));
+        }
+        promises = await Promise.all(promises);
+        let cnt = 0;
+        for (let item of user.preferences) {
+            preferencePosts[item] = promises[cnt];
+            cnt++;
+        }
+        res.json(preferencePosts);
     }
 );
 
