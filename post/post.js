@@ -189,7 +189,7 @@ router.post("/follow", [loginRequired, middlewares.getUserObject], async (req, r
     const newNotice_client = new Notification({
         recipient: currUser._id, //the client id
         type: 2,
-        message: "You have followed the post. Please wait for the host to respond. Host's email: " + host_email,
+        message: "You have marked the post on " + currPost.course + " as interested. Please wait for the host to respond. Host's email: " + host_email,
         relatedPost: currPost._id, //the post id
         relatedUser: currPost.author, //the id of the author of the post
     })
@@ -198,7 +198,7 @@ router.post("/follow", [loginRequired, middlewares.getUserObject], async (req, r
     const newNotice_host = new Notification({
         recipient: currPost.author, // id of host
         type: 1,
-        message: "A user has responded to your post. The user's email: " + client_email,
+        message: "A user has marked your post on " + currPost.course + " as interested. The user's email: " + client_email,
         relatedPost: currPost._id,  //id of the post
         relatedUser: currUser._id, //id of client
     })
@@ -288,7 +288,7 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
     const newNotice_client = new Notification({
         recipient: User_client._id, //the client id
         type: 4,
-        message: "You have been successfully accepted by the host. The post is now fulfilled.",
+        message: "You have been successfully accepted by the host. The post on " + currPost.course + " is now fulfilled.",
         relatedPost: currPost._id, //the post id
         relatedUser: currPost.author, //the id of the author of the post
     })
