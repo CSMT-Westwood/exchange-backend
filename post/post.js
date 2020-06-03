@@ -181,11 +181,15 @@ router.post("/follow", [loginRequired, middlewares.getUserObject], async (req, r
     // add the post to the list of followed posts of the user.
     currUser.followedPosts.push(currPost._id);
 
+    //get host and client email
+    const host_email = postAuthor.email;
+    const client_email = currUser.email;
+
     //add notification (type 2) for the client who accepted the post
     const newNotice_client = new Notification({
         recipient: currUser._id, //the client id
         type: 2,
-        message: "You have followed the post. Please wait for the host to respond.",
+        message: "You have followed the post. Please wait for the host to respond. Host's email: " + host_email,
         relatedPost: currPost._id, //the post id
         relatedUser: currPost.author, //the id of the author of the post
     })
@@ -194,7 +198,7 @@ router.post("/follow", [loginRequired, middlewares.getUserObject], async (req, r
     const newNotice_host = new Notification({
         recipient: currPost.author, // id of host
         type: 1,
-        message: "A user has responded to your post.",
+        message: "A user has responded to your post. The user's email: " + client_email,
         relatedPost: currPost._id,  //id of the post
         relatedUser: currUser._id, //id of client
     })
