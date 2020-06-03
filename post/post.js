@@ -54,7 +54,7 @@ router.delete("/", async (req, res) => {
 // Creating a new post
 router.post("/new", loginRequired, async (req, res) => {
     // validate input
-    if (req.body.course !== undefined) {
+    if (req.body.course !== undefined && req.body.typeOfItem != postTypeDict.SKILLS) {
         req.body.course = req.body.course.split(" ").join("").toLowerCase();
         console.log(req.body.course);
         let courseNumberI = req.body.course.search(/[0-9]/g);
