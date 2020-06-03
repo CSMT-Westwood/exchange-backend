@@ -274,7 +274,7 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
             newNotices_rejects.push(new Notification({
                 recipient: client,
                 type: 5,
-                message: "The host has accepted someone else.",
+                message: "The host of the Post " + currPost.course + " has accepted someone else.",
                 relatedPost: currPost._id,
                 relatedUser: currPost.author
             }))
