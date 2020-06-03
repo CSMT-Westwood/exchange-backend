@@ -288,7 +288,7 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
     const newNotice_client = new Notification({
         recipient: User_client._id, //the client id
         type: 4,
-        message: "You have been successfully accepted by the host. The post on " + currPost.course + " is now fulfilled.",
+        message: "You have been successfully accepted by the host. The post on " + currPost.course + " is now fulfilled. You have gained 10 RP!",
         relatedPost: currPost._id, //the post id
         relatedUser: currPost.author, //the id of the author of the post
     })
@@ -297,7 +297,7 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
     const newNotice_host = new Notification({
         recipient: currPost.author, // id of host
         type: 3,
-        message: "you have successfully accepted a client. Your post is now fulfilled.",
+        message: "you have successfully accepted a client. Your post is now fulfilled. You have gained 10 RP!",
         relatedPost: currPost._id,  //id of the post
         relatedUser: User_client._id, //id of client
     })
