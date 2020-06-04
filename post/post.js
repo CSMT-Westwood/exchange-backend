@@ -270,7 +270,7 @@ router.post("/chooseClient", [loginRequired, middlewares.getUserObject], async (
     //add reject notification to all unselected clients
     newNotices_rejects = [];
     for (client of currPost.clients) {
-        if (client !== User_client._id) {
+        if (client !== User_client._id.toString()) {
             newNotices_rejects.push(new Notification({
                 recipient: client,
                 type: 5,
